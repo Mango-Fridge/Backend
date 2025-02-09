@@ -3,8 +3,8 @@ package com.mango.mango.domain.users.service.impl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mango.mango.domain.users.repository.UsersRepository;
-import com.mango.mango.domain.users.service.UsersService;
+import com.mango.mango.domain.users.repository.UserRepository;
+import com.mango.mango.domain.users.service.UserService;
 import com.mango.mango.domain.users.dto.request.UserSignUpRequestDto;
 import com.mango.mango.domain.users.entity.Users;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UsersServiceImpl implements UsersService {
-    private final UsersRepository usersRepository;
+public class UserServiceImpl implements UserService {
+    private final UserRepository usersRepository;
     // private final PasswordEncoder passwordEncoder;
 
     @Transactional
