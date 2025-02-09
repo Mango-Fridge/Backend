@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 import com.mango.mango.global.response.ApiResponse;
 
-@RestControllerAdvice
+// @RestControllerAdvice
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(CustomException.class)
