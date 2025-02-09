@@ -29,7 +29,7 @@ public class Users {
     private Long id;
 
     @Column(name = "USR_NM", nullable = false, length = 10)
-    private String userName;
+    private String username;
 
     @Column(name = "EMAIL", nullable = false, length = 50)
     private String email;
@@ -53,8 +53,8 @@ public class Users {
     private List<AgreementLog> agreementLogs = new ArrayList<>();
 
     @Builder
-    public Users(String userName, String email, String password, String nickname, String phone) {
-        this.userName = userName;
+    public Users(String username, String email, String password, String nickname, String phone) {
+        this.username = username;
         this.email = email;
         this.password = password;
         this.nickname = nickname;

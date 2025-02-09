@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
         if (!requestDto.getEmail().matches(emailRegex)) {
             throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
         }
+
         // 필수 약관 동의 체크
         if(!requestDto.getPrivacyAgreement().equals(true) ||
                 !requestDto.getServiceAgreement().equals(true)){
@@ -57,7 +58,7 @@ public class UserServiceImpl implements UserService {
             Users.builder()
                 .email(requestDto.getEmail())
                 .password(requestDto.getPassword())
-                .userName(requestDto.getUserName())
+                .username(requestDto.getUsername())
                 .nickname(requestDto.getNickname())
                 .phone(requestDto.getPhone())
                 .build()

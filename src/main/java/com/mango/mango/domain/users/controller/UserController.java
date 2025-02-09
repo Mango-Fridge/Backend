@@ -37,7 +37,7 @@ public class UserController {
         }
     }
 
-    //전화번호 중복 유효성 검사 존재: true, 존재하지 않음: false
+    // 전화번호 중복 유효성 검사 존재: true, 존재하지 않음: false
     @PostMapping("/check-phone")
     public ResponseEntity<ApiResponse<Boolean>> checkPhone(@RequestParam String phoneNumber) {
         try{
@@ -53,7 +53,7 @@ public class UserController {
         }
     }
 
-    //닉네임 중복 유효성 검사
+    // 닉네임 중복 유효성 검사
     @PostMapping("/check-nickname")
     public ResponseEntity<ApiResponse<Boolean>> checkNickname(@RequestParam String nickname) {
         try{
@@ -69,7 +69,7 @@ public class UserController {
         }
     }
 
-    //이메일 중복 유효성 검사
+    // 이메일 중복 유효성 검사
     @PostMapping("/check-email")
     public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam String email) {
         try{
@@ -84,4 +84,4 @@ public class UserController {
                 ));
         }
     }
-} 
+}

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserSignUpRequestDto {
     @NotBlank(message = "이름은 필수 입력값입니다.")
-    private String userName;
+    private String username;
 
     @Email(message = "이메일 형식이 올바르지 않습니다.")
     @NotBlank(message = "이메일은 필수 입력값입니다.")
@@ -37,9 +37,9 @@ public class UserSignUpRequestDto {
     private String nickname;
 
     @Builder
-    public UserSignUpRequestDto(String userName, String email, String password, String phone,
+    public UserSignUpRequestDto(String username, String email, String password, String phone,
                               Boolean serviceAgreement, Boolean privacyAgreement, String nickname) {
-        this.userName = userName;
+        this.username = username;
         this.email = email;
         this.password = password;
         this.phone = phone;
@@ -50,7 +50,7 @@ public class UserSignUpRequestDto {
 
     public Users toEntity(String encodedPassword) {
         return Users.builder()
-                .userName(userName)
+                .username(username)
                 .email(email)
                 .password(encodedPassword)
                 .phone(phone)
