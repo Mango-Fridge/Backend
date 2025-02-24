@@ -2,7 +2,6 @@ package com.mango.mango.domain.users.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.mango.mango.domain.users.repository.UserRepository;
 import com.mango.mango.domain.users.service.UserService;
@@ -57,10 +56,7 @@ public class UserServiceImpl implements UserService {
         Users user = usersRepository.save(
             Users.builder()
                 .email(requestDto.getEmail())
-                .password(requestDto.getPassword())
                 .username(requestDto.getUsername())
-                .nickname(requestDto.getNickname())
-                .phone(requestDto.getPhone())
                 .build()
         );
 

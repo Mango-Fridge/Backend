@@ -28,20 +28,11 @@ public class Users {
     @Column(name = "USR_ID")
     private Long id;
 
-    @Column(name = "USR_NM", nullable = false, length = 10)
+    @Column(name = "USR_NM", nullable = false, length = 50)
     private String username;
 
     @Column(name = "EMAIL", nullable = false, length = 50)
     private String email;
-
-    @Column(name = "PSWD", nullable = false, length = 100)
-    private String password;
-
-    @Column(name = "PHONE", length = 11)
-    private String phone;
-
-    @Column(name = "NICKNAME", length = 50)
-    private String nickname;
 
     @Column(name = "CREATED_AT")
     private LocalDateTime createdAt;
@@ -53,12 +44,9 @@ public class Users {
     private List<AgreementLog> agreementLogs = new ArrayList<>();
 
     @Builder
-    public Users(String username, String email, String password, String nickname, String phone) {
+    public Users(String username, String email) {
         this.username = username;
         this.email = email;
-        this.password = password;
-        this.nickname = nickname;
-        this.phone = phone;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
         this.agreementLogs.add(new AgreementLog(this, AgreementType.PRIVACY_POLICY.name()));

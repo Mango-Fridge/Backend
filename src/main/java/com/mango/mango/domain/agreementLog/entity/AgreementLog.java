@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,13 +35,21 @@ public class AgreementLog {
     @Column(name = "KIND", nullable = false, length = 100)
     private String kind;
 
+    @Column(name = "AGREEYN")
+    private boolean agreeYn;
+
     @Column(name = "AGREED_AT")
     private LocalDateTime agreedAt;
+
+    @Column(name = "UPDATED_AT")
+    private LocalDateTime updatedAt;
 
     @Builder
     public AgreementLog(Users user, String kind) {
         this.user = user;
         this.kind = kind;
         this.agreedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        agreeYn = false;
     }
 }

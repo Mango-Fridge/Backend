@@ -5,9 +5,11 @@ import lombok.Getter;
 
 /**
  * 전역 에러 코드 정의 Enum
+ * return
  */
 @Getter
 public enum ErrorCode {
+
     // Common
     INVALID_INPUT_VALUE("C001", "Invalid Input Value"),
     INTERNAL_SERVER_ERROR("C002", "Internal Server Error"),
@@ -19,7 +21,7 @@ public enum ErrorCode {
     REQUIRED_AGREEMENT("U004", "필수 약관에 동의해주세요."),
     DUPLICATE_PHONE_NUMBER("U005", "이미 가입된 전화번호 입니다."),
     DUPLICATE_NICKNAME("U006", "이미 가입된 닉네임 입니다.");
-
+    
     private final String code;
     private final String message;
 

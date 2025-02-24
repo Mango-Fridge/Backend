@@ -52,8 +52,6 @@ public class UserSignUpRequestDto {
         return Users.builder()
                 .username(username)
                 .email(email)
-                .password(encodedPassword)
-                .phone(phone)
                 .build();
     }
 }
