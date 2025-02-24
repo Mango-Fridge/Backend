@@ -29,8 +29,8 @@ public class EmailServiceImpl implements EmailService {
             redisTemplate.delete(key);
         }
 
-        // Redis에 인증번호 저장 (만료시간 2분)
-        redisTemplate.opsForValue().set(key, verificationCode, Duration.ofMinutes(2));
+        // Redis에 인증번호 저장 (만료시간 5분)
+        redisTemplate.opsForValue().set(key, verificationCode, Duration.ofMinutes(5));
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
