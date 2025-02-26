@@ -10,17 +10,16 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
     
-    @SuppressWarnings("removal")
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf().disable()
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/**").permitAll()
+                .anyRequest().authenticated()
             )
-            .formLogin().disable()
-            .httpBasic().disable();
+            .formLogin(login -> login.disable())
+            .httpBasic(basic -> basic.disable());
         
         return http.build();
     }
