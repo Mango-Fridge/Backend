@@ -5,6 +5,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root1223
       MYSQL_DATABASE: mango
+      MYSQL_USER: root
       TZ: 'Asia/Seoul'
     ports:
       - "3306:3306"
