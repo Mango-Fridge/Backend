@@ -1,6 +1,6 @@
-package com.mango.mango.domain.users.dto.request;
+package com.mango.mango.domain.user.dto.request;
 
-import com.mango.mango.domain.users.entity.Users;
+import com.mango.mango.domain.user.entity.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -48,8 +48,8 @@ public class UserSignUpRequestDto {
         this.nickname = nickname;
     }
 
-    public Users toEntity(String encodedPassword) {
-        return Users.builder()
+    public User toEntity(String encodedPassword) {
+        return User.builder()
                 .username(username)
                 .email(email)
                 .build();

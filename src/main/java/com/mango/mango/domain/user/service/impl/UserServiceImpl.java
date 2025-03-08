@@ -1,13 +1,13 @@
-package com.mango.mango.domain.users.service.impl;
+package com.mango.mango.domain.user.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mango.mango.domain.users.repository.UserRepository;
-import com.mango.mango.domain.users.service.UserService;
+import com.mango.mango.domain.user.repository.UserRepository;
+import com.mango.mango.domain.user.service.UserService;
 import com.mango.mango.global.error.ErrorCode;
-import com.mango.mango.domain.users.dto.request.UserSignUpRequestDto;
-import com.mango.mango.domain.users.entity.Users;
+import com.mango.mango.domain.user.dto.request.UserSignUpRequestDto;
+import com.mango.mango.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import com.mango.mango.global.error.CustomException;
 
@@ -16,7 +16,6 @@ import com.mango.mango.global.error.CustomException;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository usersRepository;
-    // private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long signUp(UserSignUpRequestDto requestDto) {
@@ -39,22 +38,14 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        // 전화번호 중복 검사
-        if (usersRepository.existsByPhone(requestDto.getPhone())) {
-            throw new CustomException(ErrorCode.DUPLICATE_PHONE_NUMBER);
-        }
-
         // 닉네임 중복 검사
-        if (usersRepository.existsByNickname(requestDto.getNickname())) {
+        if (usersRepository.existsByUsername(requestDto.getUsername())) {
             throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
         }
 
-        // 비밀번호 암호화
-        // String encodedPassword = passwordEncoder.encode(requestDto.getPassword());
-        
         // 회원 저장
-        Users user = usersRepository.save(
-            Users.builder()
+        User user = usersRepository.save(
+            User.builder()
                 .email(requestDto.getEmail())
                 .username(requestDto.getUsername())
                 .build()
@@ -64,13 +55,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isPhoneDuplicate(String phone) {
-        return usersRepository.existsByPhone(phone);
-    }
-
-    @Override
-    public boolean isNicknameDuplicate(String nickname) {
-        return usersRepository.existsByNickname(nickname);
+    public boolean isUsernameDuplicate(String nickname) {
+        return usersRepository.existsByUsername(nickname);
     }
 
     @Override

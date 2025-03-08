@@ -1,5 +1,7 @@
-package com.mango.mango.domain.users.entity;
+package com.mango.mango.domain.user.entity;
 
+import com.mango.mango.domain.groups.entity.GroupUser;
+import com.mango.mango.domain.groups.entity.Group;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +15,10 @@ import lombok.NoArgsConstructor;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.agreementLog.constant.AgreementType;
 import jakarta.persistence.CascadeType;
@@ -22,7 +27,7 @@ import jakarta.persistence.CascadeType;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USR_ID")
@@ -43,8 +48,16 @@ public class Users {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<AgreementLog> agreementLogs = new ArrayList<>();
 
+    // 사용자가 그룹장으로 있는 그룹 목록 (1:N)
+    @OneToMany(mappedBy = "groupOwner")
+    private Set<Group> ownedGroups = new HashSet<>();
+
+    // 사용자가 가입한 그룹 목록 (중간 엔티티를 통해 매핑)
+    @OneToMany(mappedBy = "user")
+    private Set<GroupUser> groupMembers = new HashSet<>();
+
     @Builder
-    public Users(String username, String email) {
+    public User(String username, String email) {
         this.username = username;
         this.email = email;
         this.createdAt = LocalDateTime.now();
