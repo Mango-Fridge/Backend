@@ -20,8 +20,13 @@ public enum ErrorCode {
     INVALID_PASSWORD("U003", "비밀번호 형식이 올바르지 않습니다."),
     REQUIRED_AGREEMENT("U004", "필수 약관에 동의해주세요."),
     DUPLICATE_PHONE_NUMBER("U005", "이미 가입된 전화번호 입니다."),
-    DUPLICATE_NICKNAME("U006", "이미 가입된 닉네임 입니다.");
+    DUPLICATE_NICKNAME("U006", "이미 가입된 닉네임 입니다."),
+    USER_NOT_FOUND("U007", "해당 유저를 찾을 수 없습니다."),
     
+    // OAuth
+    INVALID_OAUTH_TOKEN("O001", "유효하지 않은 토큰입니다."),
+    INVALID_OAUTH_PROVIDER("O002", "지원되지 않는 OAuth 제공자입니다.");
+
     private final String code;
     private final String message;
 

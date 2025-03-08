@@ -1,12 +1,20 @@
 package com.mango.mango.domain.user.service.impl;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.mango.mango.domain.user.repository.UserRepository;
 import com.mango.mango.domain.user.service.UserService;
 import com.mango.mango.global.error.ErrorCode;
+import com.mango.mango.config.oauth.impl.KakaoOAuthProvider;
+import com.mango.mango.domain.agreementLog.constant.AgreementType;
+import com.mango.mango.domain.agreementLog.entity.AgreementLog;
+import com.mango.mango.domain.agreementLog.repository.AgreementLogRepository;
+import com.mango.mango.domain.user.dto.request.UserLoginDto;
 import com.mango.mango.domain.user.dto.request.UserSignUpRequestDto;
+import com.mango.mango.domain.user.dto.response.UserLoginResponseDto;
 import com.mango.mango.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import com.mango.mango.global.error.CustomException;
@@ -15,12 +23,16 @@ import com.mango.mango.global.error.CustomException;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
-    private final UserRepository usersRepository;
+    private final UserRepository userRepository;
+    private final AgreementLogRepository agreementLogRepository;
+    private final KakaoOAuthProvider kakaoOAuthProvider;
 
+    // private final PasswordEncoder passwordEncoder;
+
+    String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
+    
     @Transactional
     public Long signUp(UserSignUpRequestDto requestDto) {
-
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
 
         // 이메일 유효성 체크
         if (!requestDto.getEmail().matches(emailRegex)) {
@@ -34,17 +46,12 @@ public class UserServiceImpl implements UserService {
         }
 
         // 이메일 중복 검사
-        if (usersRepository.existsByEmail(requestDto.getEmail())) {
+        if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        // 닉네임 중복 검사
-        if (usersRepository.existsByUsername(requestDto.getUsername())) {
-            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
-        }
-
         // 회원 저장
-        User user = usersRepository.save(
+        User user = userRepository.save(
             User.builder()
                 .email(requestDto.getEmail())
                 .username(requestDto.getUsername())
@@ -55,12 +62,60 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUsernameDuplicate(String nickname) {
-        return usersRepository.existsByUsername(nickname);
+    @Transactional
+    public UserLoginResponseDto login(UserLoginDto requestDto, String accessToken) {
+        
+        User oauthUser;
+
+        if ("KAKAO".equalsIgnoreCase(requestDto.getOauthProvider())) {
+            oauthUser = kakaoOAuthProvider.getUserInfo(accessToken);
+        } else {
+            throw new CustomException(ErrorCode.INVALID_OAUTH_PROVIDER);
+        }
+
+        Optional<User> optionalUser = userRepository.findByEmailAndOauthProvider(oauthUser.getEmail(), requestDto.getOauthProvider());
+
+        User user;
+        boolean isNewUser = false;
+
+        if (optionalUser.isPresent()) {
+            // 기존 유저 존재 -> 로그인 성공
+            user = optionalUser.get();
+        } else {
+            // 신규 유저 생성
+            isNewUser = true;
+            user = User.builder()
+                .email(oauthUser.getEmail())
+                .username(oauthUser.getUsername())
+                .oauthProvider(oauthUser.getOauthProvider())
+                .build();
+            
+            user = userRepository.save(user);
+
+            AgreementLog privacyPolicyLog = new AgreementLog(user, AgreementType.PRIVACY_POLICY.name(), false);
+            AgreementLog termsOfServiceLog = new AgreementLog(user, AgreementType.TERMS_OF_SERVICE.name(), false);
+
+            agreementLogRepository.save(privacyPolicyLog);
+            agreementLogRepository.save(termsOfServiceLog);
+        }
+
+        boolean agreePrivacyPolicy = agreementLogRepository.existsByUserAndKindAndAgreeYn(user, AgreementType.PRIVACY_POLICY.name(), true);
+        boolean agreeTermsOfService = agreementLogRepository.existsByUserAndKindAndAgreeYn(user, AgreementType.TERMS_OF_SERVICE.name(), true);
+
+        return UserLoginResponseDto.builder()
+            .statusCode(200)
+            .email(user.getEmail())
+            .usrNm(user.getUsername())
+            .usrId(user.getId())
+            .oauthProvider(user.getOauthProvider())
+            .agreePrivacyPolicy(agreePrivacyPolicy)
+            .agreeTermsOfService(agreeTermsOfService)
+            .isNewUser(isNewUser)
+            .build();
     }
 
     @Override
     public boolean isEmailDuplicate(String email) {
-        return usersRepository.existsByEmail(email);
+        return userRepository.existsByEmail(email);
     }
 }
