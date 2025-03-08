@@ -63,4 +63,12 @@ public class Content extends BaseEntity {
 
     @OneToOne(mappedBy = "content")
     private Group group;
+
+    public Content(Long contentId, String contentName, int count, LocalDateTime regDate, String storageArea) {
+        this.contentId = contentId;
+        this.contentName = contentName;
+        this.count = count;
+        this.regDate = regDate;
+        this.storageArea = storageArea;
+    }
 }

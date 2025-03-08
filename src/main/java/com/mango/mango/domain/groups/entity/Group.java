@@ -39,4 +39,9 @@ public class Group extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "CONTENT_ID", unique = true)
     private Content content;
+
+    public Group(Long groupId, String groupName) {
+        this.groupId = groupId;
+        this.groupName = groupName;
+    }
 }
