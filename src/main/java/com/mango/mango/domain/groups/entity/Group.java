@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table(name = "`groups`")
+@Table(name = "user_groups")
 public class Group extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +37,6 @@ public class Group extends BaseEntity {
     private Set<GroupUser> groupMembers = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "CONTENT_ID", nullable = false, unique = true)
+    @JoinColumn(name = "CONTENT_ID", unique = true)
     private Content content;
 }
