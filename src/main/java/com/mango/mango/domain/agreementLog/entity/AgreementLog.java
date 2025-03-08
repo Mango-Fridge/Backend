@@ -1,6 +1,6 @@
 package com.mango.mango.domain.agreementLog.entity;
 
-import com.mango.mango.domain.users.entity.Users;
+import com.mango.mango.domain.user.entity.User;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +30,7 @@ public class AgreementLog {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
-    private Users user;
+    private User user;
 
     @Column(name = "KIND", nullable = false, length = 100)
     private String kind;
@@ -45,7 +45,7 @@ public class AgreementLog {
     private LocalDateTime updatedAt;
 
     @Builder
-    public AgreementLog(Users user, String kind) {
+    public AgreementLog(User user, String kind) {
         this.user = user;
         this.kind = kind;
         this.agreedAt = LocalDateTime.now();

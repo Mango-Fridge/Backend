@@ -1,4 +1,4 @@
-package com.mango.mango.domain.users.entity;
+package com.mango.mango.domain.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +14,7 @@ import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.agreementLog.constant.AgreementType;
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ import jakarta.persistence.CascadeType;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "USERS")
-public class Users {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USR_ID")
@@ -44,7 +45,7 @@ public class Users {
     private List<AgreementLog> agreementLogs = new ArrayList<>();
 
     @Builder
-    public Users(String username, String email) {
+    public User(String username, String email) {
         this.username = username;
         this.email = email;
         this.createdAt = LocalDateTime.now();
