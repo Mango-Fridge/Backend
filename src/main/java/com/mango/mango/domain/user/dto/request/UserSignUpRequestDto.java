@@ -25,27 +25,20 @@ public class UserSignUpRequestDto {
             message = "비밀번호는 8자 이상, 문자, 숫자, 특수문자를 포함해야 합니다.")
     private String password;
 
-    private String phone;
-
     @NotNull(message = "서비스 이용약관 동의는 필수입니다.")
     private Boolean serviceAgreement;
 
     @NotNull(message = "개인정보 처리방침 동의는 필수입니다.")
     private Boolean privacyAgreement;
 
-    @NotBlank(message = "닉네임은 필수 입력값입니다.")
-    private String nickname;
-
     @Builder
-    public UserSignUpRequestDto(String username, String email, String password, String phone,
-                              Boolean serviceAgreement, Boolean privacyAgreement, String nickname) {
+    public UserSignUpRequestDto(String username, String email, String password,
+                              Boolean serviceAgreement, Boolean privacyAgreement) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.phone = phone;
         this.serviceAgreement = serviceAgreement;
         this.privacyAgreement = privacyAgreement;
-        this.nickname = nickname;
     }
 
     public User toEntity(String encodedPassword) {

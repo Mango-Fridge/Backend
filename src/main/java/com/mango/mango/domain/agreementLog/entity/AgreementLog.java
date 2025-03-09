@@ -1,5 +1,6 @@
 package com.mango.mango.domain.agreementLog.entity;
 
+import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.user.entity.User;
 
 import jakarta.persistence.Column;
@@ -11,18 +12,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
 
-import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "AGREEMENT_LOG")
-public class AgreementLog {
+public class AgreementLog extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "LOG_ID")
@@ -35,21 +34,18 @@ public class AgreementLog {
     @Column(name = "KIND", nullable = false, length = 100)
     private String kind;
 
-    @Column(name = "AGREEYN")
+    @Column(name = "AGREE_YN")
     private boolean agreeYn;
 
-    @Column(name = "AGREED_AT")
-    private LocalDateTime agreedAt;
-
-    @Column(name = "UPDATED_AT")
-    private LocalDateTime updatedAt;
-
     @Builder
-    public AgreementLog(User user, String kind) {
+    public AgreementLog(User user, String kind, Boolean agreeYn) {
         this.user = user;
         this.kind = kind;
-        this.agreedAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        agreeYn = false;
+        this.agreeYn = agreeYn;
+    }
+
+    // 동의 상태를 업데이트하는 메서드
+    public void updateAgreement(boolean agreeYn) {
+        this.agreeYn = agreeYn;
     }
 }
