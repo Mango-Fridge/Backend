@@ -13,4 +13,6 @@ public interface AgreementLogRepository extends JpaRepository<AgreementLog, Long
     boolean existsByUserAndKindAndAgreeYn(User user, String name, boolean b);
 
     Optional<AgreementLog> findByUserAndKind(User user, String name);
+
+    void deleteByUser(User user);
 }

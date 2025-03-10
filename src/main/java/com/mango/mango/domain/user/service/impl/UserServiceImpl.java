@@ -15,6 +15,7 @@ import com.mango.mango.domain.agreementLog.repository.AgreementLogRepository;
 import com.mango.mango.domain.user.dto.request.UserLoginDto;
 import com.mango.mango.domain.user.dto.request.UserSignUpRequestDto;
 import com.mango.mango.domain.user.dto.response.UserLoginResponseDto;
+import com.mango.mango.domain.user.dto.response.UserResponseDto;
 import com.mango.mango.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import com.mango.mango.global.error.CustomException;
@@ -115,7 +116,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public UserResponseDto getInfoByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    
+        boolean agreePrivacyPolicy = agreementLogRepository.findByUserAndKind(user, "PRIVACY_POLICY")
+            .map(AgreementLog::isAgreeYn)
+            .orElse(false);
+
+        boolean agreeTermsOfService = agreementLogRepository.findByUserAndKind(user, "TERMS_OF_SERVICE")
+            .map(AgreementLog::isAgreeYn)
+            .orElse(false);
+
+        return UserResponseDto.fromEntity(user, agreePrivacyPolicy, agreeTermsOfService);
+    }
+
+    @Override
     public boolean isEmailDuplicate(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    @Transactional
+    public void deleteUser(Long userId){
+        User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 향후 그룹에 대한 유저 삭제도 이뤄져야 함 -> 그룹장일 때, 그룹원일 때
+
+        agreementLogRepository.deleteByUser(user);
+
+        userRepository.delete(user);
+    }
+
 }
