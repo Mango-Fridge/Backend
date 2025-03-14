@@ -9,10 +9,11 @@ import com.mango.mango.domain.item.dto.response.ItemResponseDto;
 import com.mango.mango.domain.item.entity.Item;
 import com.mango.mango.domain.item.repository.ItemRepository;
 import com.mango.mango.domain.item.service.ItemService;
+import com.mango.mango.global.error.CustomException;
+import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,15 +43,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ResponseEntity<ApiResponse<ItemResponseDto>> getItemById(Long itemId) {
         Optional<Item> itemOpt = itemRepository.findById(itemId);
-        if(itemOpt.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            ApiResponse.error(
-                                    "404",
-                                    "존재하지 않는 Item ID: " + itemId
-                            )
-                    );
-        }
+        if(itemOpt.isEmpty())      throw new CustomException(ErrorCode.ITEM_NOT_FOUND);
 
         Item item = itemOpt.get();
         ItemResponseDto res = ItemResponseDto.builder()
@@ -73,15 +66,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ResponseEntity<ApiResponse<?>> addItem(ItemRequestDto req) {
         Optional<Group> groupOpt = groupRepository.findById(req.getGroupId());
-        if(groupOpt.isEmpty()){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            ApiResponse.error(
-                                    "404",
-                                    "존재하지 않는 Group ID: " + req.getGroupId()
-                            )
-                    );
-        }
+        if(groupOpt.isEmpty())      throw new CustomException(ErrorCode.GROUP_NOT_FOUND);
+
+
         Group group = groupOpt.get();
 
         boolean isOpenItem = req.isOpenItem();

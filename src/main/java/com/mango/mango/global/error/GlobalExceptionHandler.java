@@ -15,5 +15,4 @@ public class GlobalExceptionHandler {
             .badRequest()
             .body(ApiResponse.error(e.getErrorCode().getCode(), e.getErrorCode().getMessage()));
     }
-
 }

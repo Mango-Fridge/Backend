@@ -6,10 +6,11 @@ import com.mango.mango.domain.contents.entity.Content;
 import com.mango.mango.domain.contents.repository.ContentRepository;
 import com.mango.mango.domain.contents.service.ContentService;
 import com.mango.mango.domain.groups.repository.GroupRepository;
+import com.mango.mango.global.error.CustomException;
+import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,15 +32,7 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public ResponseEntity<ApiResponse<List<ContentResponseDto>>> getContentsByGroupId(Long groupId) {
         boolean existsById = groupRepository.existsById(groupId);
-        if(!existsById){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            ApiResponse.error(
-                                    "404",
-                                    "존재하지 않는 Group ID: " + groupId
-                            )
-                    );
-        }
+        if(!existsById)     throw new CustomException(ErrorCode.GROUP_NOT_FOUND);
 
         List<Content> contents = contentRepository.getContentsByGroupId(groupId);
 
@@ -62,30 +55,13 @@ public class ContentServiceImpl implements ContentService {
         for (ContentRequestDto.ContentUpdateInfo info : req.getContents()) {
             // contentId 기반으로 Content 조회
             Optional<Content> contentOpt = contentRepository.findById(info.getContentId());
-
-            if (contentOpt.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(
-                                ApiResponse.error(
-                                        "404",
-                                        "존재하지 않는 컨텐츠 ID: " + info.getContentId()
-                                )
-                        );
-            }
+            if (contentOpt.isEmpty())       throw new CustomException(ErrorCode.CONTENT_NOT_FOUND);
 
             Content content = contentOpt.get();
 
             // 수량 조정
             int updateCnt = content.getCount() + info.getCount();
-            if (updateCnt < 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(
-                                ApiResponse.error(
-                                        "400",
-                                        "품목 개수 오류."
-                                )
-                        );
-            }
+            if (updateCnt < 0)      throw new CustomException(ErrorCode.INVALID_ITEM_COUNT);
 
             content.setCount(updateCnt);
             contentRepository.save(content);
@@ -97,15 +73,8 @@ public class ContentServiceImpl implements ContentService {
     @Override
     public ResponseEntity<ApiResponse<ContentResponseDto>> getContentDetail(Long contentId) {
         Optional<Content> contentOpt = contentRepository.findById(contentId);
-        if (contentOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(
-                            ApiResponse.error(
-                                    "404",
-                                    "존재하지 않는 Content ID: " + contentId
-                            )
-                    );
-        }
+
+        if (contentOpt.isEmpty())       throw new CustomException(ErrorCode.CONTENT_NOT_FOUND);
 
         Content content = contentOpt.get();
 
