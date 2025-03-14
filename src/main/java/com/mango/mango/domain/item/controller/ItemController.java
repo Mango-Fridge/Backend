@@ -2,7 +2,7 @@ package com.mango.mango.domain.item.controller;
 
 import com.mango.mango.domain.item.dto.request.ItemRequestDto;
 import com.mango.mango.domain.item.dto.response.ItemResponseDto;
-import com.mango.mango.domain.item.entity.Item;
+import com.mango.mango.domain.item.dto.response.SearchItemResponseDto;
 import com.mango.mango.domain.item.service.ItemService;
 import com.mango.mango.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,7 +22,7 @@ public class ItemController {
 
     @Operation(summary = "[3-1] 물품 추가 - 물품 추가 검색어 물품들 호출")
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Item>>> searchItems(@RequestParam String keyword) {
+    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(@RequestParam String keyword) {
         return itemService.searchItems(keyword);
     }
 

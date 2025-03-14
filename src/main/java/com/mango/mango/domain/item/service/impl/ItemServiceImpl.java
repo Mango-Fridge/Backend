@@ -6,6 +6,7 @@ import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groups.repository.GroupRepository;
 import com.mango.mango.domain.item.dto.request.ItemRequestDto;
 import com.mango.mango.domain.item.dto.response.ItemResponseDto;
+import com.mango.mango.domain.item.dto.response.SearchItemResponseDto;
 import com.mango.mango.domain.item.entity.Item;
 import com.mango.mango.domain.item.repository.ItemRepository;
 import com.mango.mango.domain.item.service.ItemService;
@@ -34,9 +35,23 @@ public class ItemServiceImpl implements ItemService {
 
     // 물품 추가 검색어 물품들 호출
     @Override
-    public ResponseEntity<ApiResponse<List<Item>>> searchItems(String keyword) {
+    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(String keyword) {
         List<Item> items = itemRepository.findByItemNameContainingIgnoreCase(keyword);
-        return ResponseEntity.ok(ApiResponse.success(items));
+
+        List<SearchItemResponseDto.searchItems> searchItemList = items.stream()
+                .map(item -> new SearchItemResponseDto.searchItems(
+                        item.getItemId(),
+                        item.getItemName(),
+                        item.getBrandName(),
+                        item.getNutriUnit(),
+                        item.getNutriCapacity(),
+                        item.getNutriKcal()
+                ))
+                .toList();
+
+        SearchItemResponseDto responseDto = new SearchItemResponseDto(searchItemList);
+
+        return ResponseEntity.ok(ApiResponse.success(responseDto));
     }
 
     // 물품 추가 상세 페이지 데이터 호출
