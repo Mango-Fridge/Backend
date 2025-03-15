@@ -28,7 +28,8 @@ public class ContentServiceImpl implements ContentService {
     @Autowired
     private GroupRepository groupRepository;
 
-    // 메인화면 냉장고 그룹에 따른 내용물 노출
+
+    // [3] 메인화면 - 메인화면 냉장고 그룹에 따른 내용물 노출
     @Override
     public ResponseEntity<ApiResponse<List<ContentResponseDto>>> getContentsByGroupId(Long groupId) {
         boolean existsById = groupRepository.existsById(groupId);
@@ -49,7 +50,8 @@ public class ContentServiceImpl implements ContentService {
         return ResponseEntity.ok(ApiResponse.success(contentResponseDtos));
     }
 
-    // 메인화면 냉장고 내용물 수량 조절
+
+    // [3] 메인화면 - 메인화면 냉장고 내용물 수량 조절
     @Transactional
     public ResponseEntity<ApiResponse<?>> updateContentCounts(ContentRequestDto req) {
         for (ContentRequestDto.ContentUpdateInfo info : req.getContents()) {
@@ -69,7 +71,8 @@ public class ContentServiceImpl implements ContentService {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    // 물품 상세 정보
+
+    // [3] 메인화면 - 물품 상세 정보
     @Override
     public ResponseEntity<ApiResponse<ContentResponseDto>> getContentDetail(Long contentId) {
         Optional<Content> contentOpt = contentRepository.findById(contentId);
@@ -95,7 +98,6 @@ public class ContentServiceImpl implements ContentService {
                 content.getNutriProtein(),
                 content.getNutriFat()
         );
-
         return ResponseEntity.ok(ApiResponse.success(contentResponseDto));
     }
 }

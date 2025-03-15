@@ -33,7 +33,8 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private GroupRepository groupRepository;
 
-    // 물품 추가 검색어 물품들 호출
+
+    // [3-1] 물품 추가 - 물품 추가 검색어 물품들 호출
     @Override
     public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(String keyword) {
         List<Item> items = itemRepository.findByItemNameContainingIgnoreCase(keyword);
@@ -54,7 +55,8 @@ public class ItemServiceImpl implements ItemService {
         return ResponseEntity.ok(ApiResponse.success(responseDto));
     }
 
-    // 물품 추가 상세 페이지 데이터 호출
+
+    // [3-1] 물품 추가 - 물품 추가 상세 페이지 데이터 호출
     @Override
     public ResponseEntity<ApiResponse<ItemResponseDto>> getItemById(Long itemId) {
         Optional<Item> itemOpt = itemRepository.findById(itemId);
@@ -77,7 +79,8 @@ public class ItemServiceImpl implements ItemService {
         return ResponseEntity.ok(ApiResponse.success(res));
     }
 
-    // 물품 추가
+
+    // [3-1] 물품 추가 - 물품 추가
     @Override
     public ResponseEntity<ApiResponse<?>> addItem(ItemRequestDto req) {
         Optional<Group> groupOpt = groupRepository.findById(req.getGroupId());
@@ -101,7 +104,7 @@ public class ItemServiceImpl implements ItemService {
                             .nutriKcal(req.getNutriKcal())
                             .nutriCarbohydrate(req.getNutriCarbohydrate())
                             .nutriProtein(req.getNutriProtein())
-                            .nutriFat(req.getNutrifat())
+                            .nutriFat(req.getNutriFat())
                             .build()
             );
         }
@@ -122,7 +125,7 @@ public class ItemServiceImpl implements ItemService {
                         .nutriKcal(req.getNutriKcal())
                         .nutriCarbohydrate(req.getNutriCarbohydrate())
                         .nutriProtein(req.getNutriProtein())
-                        .nutriFat(req.getNutrifat())
+                        .nutriFat(req.getNutriFat())
                         .group(group)
                         .build()
         );
