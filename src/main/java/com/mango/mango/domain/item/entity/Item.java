@@ -2,14 +2,12 @@ package com.mango.mango.domain.item.entity;
 
 import com.mango.mango.domain.base.entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "items")
 public class Item extends BaseEntity {
     @Id
@@ -62,6 +60,30 @@ public class Item extends BaseEntity {
         this.category = category;
         this.brandName = brandName;
         this.storageArea = storageArea;
+        this.nutriUnit = nutriUnit;
+        this.nutriCapacity = nutriCapacity;
+        this.nutriKcal = nutriKcal;
+        this.nutriCarbohydrate = nutriCarbohydrate;
+        this.nutriProtein = nutriProtein;
+        this.nutriFat = nutriFat;
+    }
+
+    public Item(
+            Long itemId,
+            String itemName,
+            String category,
+            String brandName,
+            String nutriUnit,
+            int nutriCapacity,
+            int nutriKcal,
+            int nutriCarbohydrate,
+            int nutriProtein,
+            int nutriFat
+    ) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.category = category;
+        this.brandName = brandName;
         this.nutriUnit = nutriUnit;
         this.nutriCapacity = nutriCapacity;
         this.nutriKcal = nutriKcal;

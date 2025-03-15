@@ -26,7 +26,8 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserRepository userRepository;
 
-    // 냉장고 그룹 불러오기
+
+    // [3] 메인화면 - 냉장고 그룹 불러오기
     @Override
     public ResponseEntity<ApiResponse<List<GroupResponseDto>>> getGroupsByUserId(Long userId) {
         boolean existsById = userRepository.existsById(userId);
