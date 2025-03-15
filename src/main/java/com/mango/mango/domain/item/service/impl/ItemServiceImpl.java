@@ -81,6 +81,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     // [3-1] 물품 추가 - 물품 추가
+    @Transactional
     @Override
     public ResponseEntity<ApiResponse<?>> addItem(ItemRequestDto req) {
         Optional<Group> groupOpt = groupRepository.findById(req.getGroupId());
