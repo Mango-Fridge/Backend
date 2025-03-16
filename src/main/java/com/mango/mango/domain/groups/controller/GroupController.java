@@ -1,6 +1,7 @@
 package com.mango.mango.domain.groups.controller;
 
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
+import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.service.GroupService;
 import com.mango.mango.global.response.ApiResponse;
@@ -29,5 +30,11 @@ public class GroupController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<?>> createGroup(@RequestBody CreateGroupRequestDto req) {
         return groupService.createGroup(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 존재 여부 확인 (유효성)")
+    @GetMapping("/exist/{groupCode}")
+    public ResponseEntity<ApiResponse<GroupExistResponseDto>> existGroupByCode(@PathVariable String groupCode) {
+        return groupService.existGroupByCode(groupCode);
     }
 }

@@ -3,6 +3,7 @@ package com.mango.mango.domain.groups.service.impl;
 import com.mango.mango.domain.groupUsers.entity.GroupUser;
 import com.mango.mango.domain.groupUsers.repository.GroupUserRepository;
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
+import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groups.repository.GroupRepository;
@@ -51,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
         return ResponseEntity.ok(ApiResponse.success(groupResponseDtos));
     }
 
+
     // [5] 그룹 - 그룹 생성
     @Transactional
     @Override
@@ -78,5 +80,28 @@ public class GroupServiceImpl implements GroupService {
         groupUserRepository.save(groupUser);
 
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+
+    // [5] 그룹 - 그룹 존재 여부 확인 (유효성)
+    public ResponseEntity<ApiResponse<GroupExistResponseDto>> existGroupByCode(String groupCode) {
+        Long groupId = extractGroupIdFromCode(groupCode);
+
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        GroupExistResponseDto groupExistResponseDto = GroupExistResponseDto.builder()
+                .groupName(group.getGroupName())
+                .groupOwnerName(group.getGroupOwner().getUsername())
+                .groupMemberCount(group.getGroupMembers().size())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.success(groupExistResponseDto));
+    }
+
+    
+    private Long extractGroupIdFromCode(String groupCode) {
+        String[] parts = groupCode.split("-");
+        return Long.valueOf(parts[2]);
     }
 }
