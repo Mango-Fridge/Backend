@@ -58,17 +58,4 @@ public class ContentResponseDto {
         NutriProtein = nutriProtein;
         Nutrifat = nutrifat;
     }
-
-    public ContentResponseDto(Long contentId,
-                              String contentName,
-                              int count,
-                              LocalDateTime expDate,
-                              String storageArea)
-    {
-        this.contentId = contentId;
-        this.contentName = contentName;
-        this.count = count;
-        this.expDate = expDate;
-        this.storageArea = storageArea;
-    }
 }

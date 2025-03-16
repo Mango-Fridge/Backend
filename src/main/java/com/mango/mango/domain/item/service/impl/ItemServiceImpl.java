@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -59,10 +58,9 @@ public class ItemServiceImpl implements ItemService {
     // [3-1] 물품 추가 - 물품 추가 상세 페이지 데이터 호출
     @Override
     public ResponseEntity<ApiResponse<ItemResponseDto>> getItemById(Long itemId) {
-        Optional<Item> itemOpt = itemRepository.findById(itemId);
-        if(itemOpt.isEmpty())      throw new CustomException(ErrorCode.ITEM_NOT_FOUND);
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new CustomException(ErrorCode.ITEM_NOT_FOUND));
 
-        Item item = itemOpt.get();
         ItemResponseDto res = ItemResponseDto.builder()
                 .itemId(item.getItemId())
                 .itemName(item.getItemName())
@@ -84,11 +82,8 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     @Override
     public ResponseEntity<ApiResponse<?>> addItem(ItemRequestDto req) {
-        Optional<Group> groupOpt = groupRepository.findById(req.getGroupId());
-        if(groupOpt.isEmpty())      throw new CustomException(ErrorCode.GROUP_NOT_FOUND);
-
-
-        Group group = groupOpt.get();
+        Group group = groupRepository.findById(req.getGroupId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         boolean isOpenItem = req.isOpenItem();
 

@@ -2,6 +2,7 @@ package com.mango.mango.domain.contents.service.impl;
 
 import com.mango.mango.domain.contents.dto.request.ContentRequestDto;
 import com.mango.mango.domain.contents.dto.response.ContentResponseDto;
+import com.mango.mango.domain.contents.dto.response.GroupContentResponseDto;
 import com.mango.mango.domain.contents.entity.Content;
 import com.mango.mango.domain.contents.repository.ContentRepository;
 import com.mango.mango.domain.contents.service.ContentService;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,14 +31,14 @@ public class ContentServiceImpl implements ContentService {
 
     // [3] 메인화면 - 메인화면 냉장고 그룹에 따른 내용물 노출
     @Override
-    public ResponseEntity<ApiResponse<List<ContentResponseDto>>> getContentsByGroupId(Long groupId) {
+    public ResponseEntity<ApiResponse<List<GroupContentResponseDto>>> getContentsByGroupId(Long groupId) {
         boolean existsById = groupRepository.existsById(groupId);
         if(!existsById)     throw new CustomException(ErrorCode.GROUP_NOT_FOUND);
 
         List<Content> contents = contentRepository.getContentsByGroupId(groupId);
 
-        List<ContentResponseDto> contentResponseDtos = contents.stream()
-                .map(content -> new ContentResponseDto(
+        List<GroupContentResponseDto> GroupContentResponseDtos = contents.stream()
+                .map(content -> new GroupContentResponseDto(
                         content.getContentId(),
                         content.getContentName(),
                         content.getCount(),
@@ -47,7 +47,7 @@ public class ContentServiceImpl implements ContentService {
                 ))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.success(contentResponseDtos));
+        return ResponseEntity.ok(ApiResponse.success(GroupContentResponseDtos));
     }
 
 
@@ -56,10 +56,8 @@ public class ContentServiceImpl implements ContentService {
     public ResponseEntity<ApiResponse<?>> updateContentCounts(ContentRequestDto req) {
         for (ContentRequestDto.ContentUpdateInfo info : req.getContents()) {
             // contentId 기반으로 Content 조회
-            Optional<Content> contentOpt = contentRepository.findById(info.getContentId());
-            if (contentOpt.isEmpty())       throw new CustomException(ErrorCode.CONTENT_NOT_FOUND);
-
-            Content content = contentOpt.get();
+            Content content = contentRepository.findById(info.getContentId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
             // 수량 조정
             int updateCnt = content.getCount() + info.getCount();
@@ -75,11 +73,8 @@ public class ContentServiceImpl implements ContentService {
     // [3] 메인화면 - 물품 상세 정보
     @Override
     public ResponseEntity<ApiResponse<ContentResponseDto>> getContentDetail(Long contentId) {
-        Optional<Content> contentOpt = contentRepository.findById(contentId);
-
-        if (contentOpt.isEmpty())       throw new CustomException(ErrorCode.CONTENT_NOT_FOUND);
-
-        Content content = contentOpt.get();
+        Content content = contentRepository.findById(contentId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
         ContentResponseDto contentResponseDto = new ContentResponseDto(
                 content.getContentId(),
