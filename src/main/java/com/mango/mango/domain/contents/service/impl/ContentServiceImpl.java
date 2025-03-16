@@ -2,6 +2,7 @@ package com.mango.mango.domain.contents.service.impl;
 
 import com.mango.mango.domain.contents.dto.request.ContentRequestDto;
 import com.mango.mango.domain.contents.dto.response.ContentResponseDto;
+import com.mango.mango.domain.contents.dto.response.GroupContentResponseDto;
 import com.mango.mango.domain.contents.entity.Content;
 import com.mango.mango.domain.contents.repository.ContentRepository;
 import com.mango.mango.domain.contents.service.ContentService;
@@ -30,14 +31,14 @@ public class ContentServiceImpl implements ContentService {
 
     // [3] 메인화면 - 메인화면 냉장고 그룹에 따른 내용물 노출
     @Override
-    public ResponseEntity<ApiResponse<List<ContentResponseDto>>> getContentsByGroupId(Long groupId) {
+    public ResponseEntity<ApiResponse<List<GroupContentResponseDto>>> getContentsByGroupId(Long groupId) {
         boolean existsById = groupRepository.existsById(groupId);
         if(!existsById)     throw new CustomException(ErrorCode.GROUP_NOT_FOUND);
 
         List<Content> contents = contentRepository.getContentsByGroupId(groupId);
 
-        List<ContentResponseDto> contentResponseDtos = contents.stream()
-                .map(content -> new ContentResponseDto(
+        List<GroupContentResponseDto> GroupContentResponseDtos = contents.stream()
+                .map(content -> new GroupContentResponseDto(
                         content.getContentId(),
                         content.getContentName(),
                         content.getCount(),
@@ -46,7 +47,7 @@ public class ContentServiceImpl implements ContentService {
                 ))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(ApiResponse.success(contentResponseDtos));
+        return ResponseEntity.ok(ApiResponse.success(GroupContentResponseDtos));
     }
 
 

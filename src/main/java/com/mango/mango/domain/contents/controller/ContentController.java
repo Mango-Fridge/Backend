@@ -2,6 +2,7 @@ package com.mango.mango.domain.contents.controller;
 
 import com.mango.mango.domain.contents.dto.request.ContentRequestDto;
 import com.mango.mango.domain.contents.dto.response.ContentResponseDto;
+import com.mango.mango.domain.contents.dto.response.GroupContentResponseDto;
 import com.mango.mango.domain.contents.service.ContentService;
 import com.mango.mango.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,7 +22,7 @@ public class ContentController {
 
     @Operation(summary = "[3] 메인화면 - 메인화면 냉장고 그룹에 따른 내용물 노출")
     @GetMapping("/group/{groupId}")
-    public ResponseEntity<ApiResponse<List<ContentResponseDto>>> getContentsByGroupId(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponse<List<GroupContentResponseDto>>> getContentsByGroupId(@PathVariable Long groupId) {
         return contentService.getContentsByGroupId(groupId);
     }
 

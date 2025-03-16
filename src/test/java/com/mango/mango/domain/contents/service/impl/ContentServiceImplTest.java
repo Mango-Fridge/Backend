@@ -2,6 +2,7 @@ package com.mango.mango.domain.contents.service.impl;
 
 import com.mango.mango.domain.contents.dto.request.ContentRequestDto;
 import com.mango.mango.domain.contents.dto.response.ContentResponseDto;
+import com.mango.mango.domain.contents.dto.response.GroupContentResponseDto;
 import com.mango.mango.domain.contents.entity.Content;
 import com.mango.mango.domain.contents.repository.ContentRepository;
 import com.mango.mango.domain.groups.repository.GroupRepository;
@@ -74,7 +75,7 @@ public class ContentServiceImplTest {
         when(contentRepository.getContentsByGroupId(anyLong())).thenReturn(contentList);
 
         // When & Then
-        ResponseEntity<ApiResponse<List<ContentResponseDto>>> response = contentService.getContentsByGroupId(1L);
+        ResponseEntity<ApiResponse<List<GroupContentResponseDto>>> response = contentService.getContentsByGroupId(1L);
 
         // 예외 메시지 검증
         assertEquals(HttpStatus.OK, response.getStatusCode());
