@@ -35,6 +35,7 @@ public class UserServiceImpl implements UserService {
 
     String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
     
+    @Override
     @Transactional
     public Long signUp(UserSignUpRequestDto requestDto) {
 
@@ -123,8 +124,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponseDto getInfoByUserId(Long userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        User user = createUser(userId);
     
         boolean agreePrivacyPolicy = agreementLogRepository.findByUserAndKind(user, "PRIVACY_POLICY")
             .map(AgreementLog::isAgreeYn)
@@ -144,6 +144,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public boolean setUsername(Long userId, String username){
+        User user = createUser(userId);
+
+        user.updateUsername(username);
+        userRepository.save(user);
+
+        return true;
+    }
+
+
+    @Override
+    @Transactional
     public void deleteUser(Long userId){
         User user = userRepository.findById(userId)
         .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -153,6 +165,13 @@ public class UserServiceImpl implements UserService {
         agreementLogRepository.deleteByUser(user);
 
         userRepository.delete(user);
+    }
+
+    public User createUser(Long userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return user;
     }
 
 }

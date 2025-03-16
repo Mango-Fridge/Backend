@@ -60,4 +60,8 @@ public class User extends BaseEntity{
         this.email = email;
         this.oauthProvider = oauthProvider;
     }
+
+    public void updateUsername(String newUsername){
+        this.username = newUsername;
+    }
 }

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -98,6 +99,22 @@ public class UserController {
     public ResponseEntity<ApiResponse<Boolean>> checkEmail(@RequestParam String email) {
         boolean isDuplicate = userService.isEmailDuplicate(email);
         return ResponseEntity.ok(ApiResponse.success(isDuplicate));
+    }
+
+    /**
+     * 유저 이름 변경
+     * @param userId
+     * @param username
+     * @return
+     */
+    @Operation(
+        summary = "유저 이름 변경",
+        description = "유저의 이름을 변경한다"
+    )
+    @PutMapping()
+    public ResponseEntity<ApiResponse<Boolean>> changeName(@RequestParam Long userId,
+                                                           @RequestParam String username){
+        return ResponseEntity.ok(ApiResponse.success(userService.setUsername(userId, username)));
     }
 
 
