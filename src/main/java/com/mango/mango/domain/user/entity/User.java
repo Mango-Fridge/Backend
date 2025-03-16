@@ -19,7 +19,8 @@ import java.util.Set;
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.groups.entity.Group;
-import com.mango.mango.domain.groups.entity.GroupUser;
+import com.mango.mango.domain.groupUsers.entity.GroupUser;
+
 
 import jakarta.persistence.CascadeType;
 
