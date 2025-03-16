@@ -48,6 +48,7 @@ dependencies {
 
 	//jwt
 	implementation 'io.jsonwebtoken:jjwt:0.12.4'
+	implementation 'com.auth0:java-jwt:4.0.0'
 }
 
 tasks.named('test') {

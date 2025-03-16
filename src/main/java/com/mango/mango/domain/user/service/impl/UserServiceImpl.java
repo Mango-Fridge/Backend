@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mango.mango.domain.user.repository.UserRepository;
 import com.mango.mango.domain.user.service.UserService;
 import com.mango.mango.global.error.ErrorCode;
+import com.mango.mango.config.oauth.impl.AppleOAuthProvider;
 import com.mango.mango.config.oauth.impl.KakaoOAuthProvider;
 import com.mango.mango.domain.agreementLog.constant.AgreementType;
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
@@ -26,7 +27,9 @@ import com.mango.mango.global.error.CustomException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AgreementLogRepository agreementLogRepository;
+
     private final KakaoOAuthProvider kakaoOAuthProvider;
+    private final AppleOAuthProvider appleOAuthProvider;
 
     // private final PasswordEncoder passwordEncoder;
 
@@ -70,7 +73,9 @@ public class UserServiceImpl implements UserService {
 
         if ("KAKAO".equalsIgnoreCase(requestDto.getOauthProvider())) {
             oauthUser = kakaoOAuthProvider.getUserInfo(accessToken);
-        } else {
+        } else if("APPLE".equalsIgnoreCase(requestDto.getOauthProvider())){
+            oauthUser = appleOAuthProvider.getUserInfo(accessToken);
+        }else {
             throw new CustomException(ErrorCode.INVALID_OAUTH_PROVIDER);
         }
 
