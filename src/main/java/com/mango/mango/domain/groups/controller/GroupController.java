@@ -1,5 +1,6 @@
 package com.mango.mango.domain.groups.controller;
 
+import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.service.GroupService;
 import com.mango.mango.global.response.ApiResponse;
@@ -22,5 +23,11 @@ public class GroupController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<GroupResponseDto>>> getGroupsByUserId(@PathVariable Long userId) {
         return groupService.getGroupsByUserId(userId);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 생성")
+    @PostMapping("/create")
+    public ResponseEntity<ApiResponse<?>> createGroup(@RequestBody CreateGroupRequestDto req) {
+        return groupService.createGroup(req);
     }
 }
