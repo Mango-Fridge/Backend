@@ -61,7 +61,8 @@ public class Content extends BaseEntity {
     @Column(name = "NUTRI_FAT")
     private int nutriFat;
 
-    @OneToOne(mappedBy = "content")
+    @ManyToOne
+    @JoinColumn(name = "GRP_ID")
     private Group group;
 
     @Builder
@@ -87,8 +88,7 @@ public class Content extends BaseEntity {
                    int nutriKcal,
                    int nutriCarbohydrate,
                    int nutriProtein,
-                   int nutriFat,
-                   Group group)
+                   int nutriFat)
     {
         this.contentName = contentName;
         this.category = category;
@@ -104,6 +104,5 @@ public class Content extends BaseEntity {
         this.nutriCarbohydrate = nutriCarbohydrate;
         this.nutriProtein = nutriProtein;
         this.nutriFat = nutriFat;
-        this.group = group;
     }
 }
