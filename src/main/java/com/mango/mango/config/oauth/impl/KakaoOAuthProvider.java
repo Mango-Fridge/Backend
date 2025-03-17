@@ -20,11 +20,6 @@ public class KakaoOAuthProvider implements OAuthProvider {
     private static final String KAKAO_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
     private static final String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
-    // https://kauth.kakao.com/oauth/authorize?client_id=4985bb6e1259e1eea63d88a7decc596b&redirect_uri=http://localhost:8080/auth/kakao-login&response_type=code
-// 3qqrRHAvfu9BpIBox7B5FiKUocD3qME9Mz_Qsau1Abhe9X2rg7pajAAAAAQKPXObAAABlXU1qSyBPKUF0hG4dQ
-
-// odh4311@naver.com
-// 1218605a!
 
     @Value("${OAUTH_KAKAO_CLIENT_ID}")
     private String kakaoClientId;

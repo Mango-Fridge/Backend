@@ -9,6 +9,10 @@ gradle-app.setting
 !gradle-wrapper.jar
 .gradletasknamecache
 
+# Key
+src/main/resources/AuthKey_C25DWL797J.p8
+src/main/resources/application.properties
+
 # IntelliJ IDEA
 .idea/
 *.iws
@@ -52,9 +56,9 @@ logs/
 ehthumbs.db
 Thumbs.db
 
-# Application properties (선택적)
-# application-*.properties
-# application-*.yml
+application.properties
+application-*.properties
+application-*.yml
 
 # Test reports
 **/test-results

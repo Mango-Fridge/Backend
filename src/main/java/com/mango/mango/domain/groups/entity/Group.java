@@ -2,16 +2,12 @@ package com.mango.mango.domain.groups.entity;
 
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.contents.entity.Content;
+import com.mango.mango.domain.groupUsers.entity.GroupUser;
 import com.mango.mango.domain.user.entity.User;
-
 import jakarta.persistence.*;
+import lombok.*;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -36,9 +32,14 @@ public class Group extends BaseEntity {
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<GroupUser> groupMembers = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "CONTENT_ID", unique = true)
-    private Content content;
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Content> contents = new ArrayList<>();
+
+    @Builder
+    public Group(String groupName, User groupOwner, Content content) {
+        this.groupName = groupName;
+        this.groupOwner = groupOwner;
+    }
 
     public Group(Long groupId, String groupName) {
         this.groupId = groupId;

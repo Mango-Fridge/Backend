@@ -3,15 +3,15 @@ package com.mango.mango.domain.contents.entity;
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.groups.entity.Group;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "contents")
 public class Content extends BaseEntity {
     @Id
@@ -61,14 +61,48 @@ public class Content extends BaseEntity {
     @Column(name = "NUTRI_FAT")
     private int nutriFat;
 
-    @OneToOne(mappedBy = "content")
+    @ManyToOne
+    @JoinColumn(name = "GRP_ID")
     private Group group;
 
+    @Builder
     public Content(Long contentId, String contentName, int count, LocalDateTime regDate, String storageArea) {
         this.contentId = contentId;
         this.contentName = contentName;
         this.count = count;
         this.regDate = regDate;
         this.storageArea = storageArea;
+    }
+
+    @Builder
+    public Content(String contentName,
+                   String category,
+                   String brandName,
+                   int count,
+                   LocalDateTime regDate,
+                   LocalDateTime expDate,
+                   String storageArea,
+                   String memo,
+                   String nutriUnit,
+                   int nutriCapacity,
+                   int nutriKcal,
+                   int nutriCarbohydrate,
+                   int nutriProtein,
+                   int nutriFat)
+    {
+        this.contentName = contentName;
+        this.category = category;
+        this.brandName = brandName;
+        this.count = count;
+        this.regDate = regDate;
+        this.expDate = expDate;
+        this.storageArea = storageArea;
+        this.memo = memo;
+        this.nutriUnit = nutriUnit;
+        this.nutriCapacity = nutriCapacity;
+        this.nutriKcal = nutriKcal;
+        this.nutriCarbohydrate = nutriCarbohydrate;
+        this.nutriProtein = nutriProtein;
+        this.nutriFat = nutriFat;
     }
 }

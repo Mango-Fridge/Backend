@@ -11,8 +11,8 @@ import lombok.Getter;
 public enum ErrorCode {
 
     // Common
-    INVALID_INPUT_VALUE("C001", "Invalid Input Value"),
-    INTERNAL_SERVER_ERROR("C002", "Internal Server Error"),
+//    INVALID_INPUT_VALUE("C001", "Invalid Input Value"),
+//    INTERNAL_SERVER_ERROR("C002", "Internal Server Error"),
     
     // User
     INVALID_EMAIL_FORMAT("U001", "올바른 이메일 형식이 아닙니다."),
@@ -25,7 +25,19 @@ public enum ErrorCode {
     
     // OAuth
     INVALID_OAUTH_TOKEN("O001", "유효하지 않은 토큰입니다."),
-    INVALID_OAUTH_PROVIDER("O002", "지원되지 않는 OAuth 제공자입니다.");
+    INVALID_OAUTH_PROVIDER("O002", "지원되지 않는 OAuth 제공자입니다."),
+
+    // Content
+    CONTENT_NOT_FOUND("C001", "해당 콘텐츠을 찾을 수 없습니다."),
+    INVALID_ITEM_COUNT("C002", "품목 개수가 0보다 작을 수 없습니다."),
+
+
+    // Item
+    ITEM_NOT_FOUND("I001", "해당 아이템을 찾을 수 없습니다."),
+
+    // Group
+    GROUP_NOT_FOUND("G001", "해당 그룹을 찾을 수 없습니다.");
+
 
     private final String code;
     private final String message;
