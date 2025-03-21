@@ -2,8 +2,16 @@ package com.mango.mango.domain.cookItem.service;
 
 import java.util.List;
 
-import com.mango.mango.domain.cookItem.dto.response.CookItemResponseDto;
+import org.springframework.http.ResponseEntity;
+
+import com.mango.mango.domain.cookItem.dto.request.CookItemRequestDto;
+import com.mango.mango.domain.cookItem.dto.request.CookItemUpdateRequestDto;
+import com.mango.mango.domain.cookItem.dto.response.CookItemDetailResponseDto;
+import com.mango.mango.global.response.ApiResponse;
 
 public interface CookItemService {
-    List<CookItemResponseDto> getCookItemsByCookId(Long cookId);
+    ResponseEntity<ApiResponse<List<CookItemDetailResponseDto>>> getCookItemsByCookId(Long cookId);
+    ResponseEntity<ApiResponse<Void>> addCookItem(Long cookId, CookItemRequestDto request);
+    ResponseEntity<ApiResponse<Void>> updateCookItem(Long cookItemId, CookItemUpdateRequestDto request);
+    ResponseEntity<ApiResponse<Void>> deleteCookItem(Long cookId);
 }
