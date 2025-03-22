@@ -31,9 +31,14 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND("C001", "해당 콘텐츠을 찾을 수 없습니다."),
     INVALID_ITEM_COUNT("C002", "품목 개수가 0보다 작을 수 없습니다."),
 
-
     // Item
     ITEM_NOT_FOUND("I001", "해당 아이템을 찾을 수 없습니다."),
+
+    // Cook
+    COOK_NOT_FOUND("CO001", "해당 요리를 찾을 수 없습니다."),
+
+    // CookItem
+    COOK_ITEM_NOT_FOUND("CI001", "해당 재료를 찾을 수 없습니다."),
 
     // Group
     GROUP_NOT_FOUND("G001", "해당 그룹을 찾을 수 없습니다.");

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.mango.mango.domain.user.repository.UserRepository;
 import com.mango.mango.domain.user.service.UserService;
 import com.mango.mango.global.error.ErrorCode;
+import com.mango.mango.config.oauth.impl.AppleOAuthProvider;
 import com.mango.mango.config.oauth.impl.KakaoOAuthProvider;
 import com.mango.mango.domain.agreementLog.constant.AgreementType;
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
@@ -15,6 +16,7 @@ import com.mango.mango.domain.agreementLog.repository.AgreementLogRepository;
 import com.mango.mango.domain.user.dto.request.UserLoginDto;
 import com.mango.mango.domain.user.dto.request.UserSignUpRequestDto;
 import com.mango.mango.domain.user.dto.response.UserLoginResponseDto;
+import com.mango.mango.domain.user.dto.response.UserResponseDto;
 import com.mango.mango.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import com.mango.mango.global.error.CustomException;
@@ -25,12 +27,15 @@ import com.mango.mango.global.error.CustomException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AgreementLogRepository agreementLogRepository;
+
     private final KakaoOAuthProvider kakaoOAuthProvider;
+    private final AppleOAuthProvider appleOAuthProvider;
 
     // private final PasswordEncoder passwordEncoder;
 
     String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
     
+    @Override
     @Transactional
     public Long signUp(UserSignUpRequestDto requestDto) {
 
@@ -69,7 +74,9 @@ public class UserServiceImpl implements UserService {
 
         if ("KAKAO".equalsIgnoreCase(requestDto.getOauthProvider())) {
             oauthUser = kakaoOAuthProvider.getUserInfo(accessToken);
-        } else {
+        } else if("APPLE".equalsIgnoreCase(requestDto.getOauthProvider())){
+            oauthUser = appleOAuthProvider.getUserInfo(accessToken);
+        }else {
             throw new CustomException(ErrorCode.INVALID_OAUTH_PROVIDER);
         }
 
@@ -115,7 +122,56 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public UserResponseDto getInfoByUserId(Long userId) {
+        User user = createUser(userId);
+    
+        boolean agreePrivacyPolicy = agreementLogRepository.findByUserAndKind(user, "PRIVACY_POLICY")
+            .map(AgreementLog::isAgreeYn)
+            .orElse(false);
+
+        boolean agreeTermsOfService = agreementLogRepository.findByUserAndKind(user, "TERMS_OF_SERVICE")
+            .map(AgreementLog::isAgreeYn)
+            .orElse(false);
+
+        return UserResponseDto.fromEntity(user, agreePrivacyPolicy, agreeTermsOfService);
+    }
+
+    @Override
     public boolean isEmailDuplicate(String email) {
         return userRepository.existsByEmail(email);
     }
+
+    @Override
+    @Transactional
+    public boolean setUsername(Long userId, String username){
+        User user = createUser(userId);
+
+        user.updateUsername(username);
+        userRepository.save(user);
+
+        return true;
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteUser(Long userId){
+        User user = userRepository.findById(userId)
+        .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 향후 그룹에 대한 유저 삭제도 이뤄져야 함 -> 그룹장일 때, 그룹원일 때
+
+        agreementLogRepository.deleteByUser(user);
+
+        userRepository.delete(user);
+    }
+
+    public User createUser(Long userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return user;
+    }
+
 }
