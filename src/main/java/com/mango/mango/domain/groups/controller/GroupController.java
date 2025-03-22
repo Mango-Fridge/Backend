@@ -1,6 +1,7 @@
 package com.mango.mango.domain.groups.controller;
 
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
+import com.mango.mango.domain.groups.dto.reqeust.JoinGroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.service.GroupService;
@@ -34,5 +35,11 @@ public class GroupController {
     @GetMapping("/exist/{groupCode}")
     public ResponseEntity<ApiResponse<GroupExistResponseDto>> existGroupByCode(@PathVariable String groupCode) {
         return groupService.existGroupByCode(groupCode);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 참여하기")
+    @PostMapping("/join")
+    public ResponseEntity<ApiResponse<?>> joinGroup(@RequestBody JoinGroupRequestDto req) {
+        return groupService.joinGroup(req);
     }
 }

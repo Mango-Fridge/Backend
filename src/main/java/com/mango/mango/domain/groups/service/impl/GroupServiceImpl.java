@@ -3,6 +3,7 @@ package com.mango.mango.domain.groups.service.impl;
 import com.mango.mango.domain.groupMembers.entity.GroupMember;
 import com.mango.mango.domain.groupMembers.repository.GroupMemberRepository;
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
+import com.mango.mango.domain.groups.dto.reqeust.JoinGroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.entity.Group;
@@ -15,9 +16,13 @@ import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +34,7 @@ public class GroupServiceImpl implements GroupService {
     private UserRepository userRepository;
     @Autowired
     private GroupMemberRepository groupMemberRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
 
     // [3] 메인화면 - 냉장고 그룹 불러오기
@@ -105,5 +111,36 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success(groupExistResponseDto));
+    }
+
+
+    // [5] 그룹 - 그룹 참여하기
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponse<?>> joinGroup(JoinGroupRequestDto req) {
+        Long userId = req.getUserId();
+        Long groupId = req.getGroupId();
+
+        // 유저 존재 여부 확인
+        User groupUser = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 그룹 존재 여부 확인
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 이미 그룹에 속한 유저는 참여할 수 없음
+        if (groupMemberRepository.existsByUser(groupUser))       throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
+
+
+        // 이미 참여 신청한 유저는 제외
+        if (redisTemplate.opsForSet().isMember(groupId.toString(), userId.toString()))      throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP_HOPE);
+
+
+        // groupId별 userId로 저장(만료일자 7일)
+        redisTemplate.opsForSet().add(groupId.toString(), userId.toString());
+        redisTemplate.expire(groupId.toString(), 7, TimeUnit.DAYS);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
