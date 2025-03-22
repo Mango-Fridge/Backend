@@ -80,6 +80,7 @@ public class ContentServiceImpl implements ContentService {
                 content.getContentId(),
                 content.getContentName(),
                 content.getCategory(),
+                content.getSubCategory(),
                 content.getBrandName(),
                 content.getCount(),
                 content.getRegDate(),

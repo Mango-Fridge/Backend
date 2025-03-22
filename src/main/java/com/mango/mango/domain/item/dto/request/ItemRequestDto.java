@@ -16,6 +16,7 @@ public class ItemRequestDto {
     private Long groupId;
     private String itemName;
     private String category;
+    private String subCategory;
     private String brandName;
     private int count;
     private LocalDateTime regDate;
@@ -33,6 +34,7 @@ public class ItemRequestDto {
             Long groupId,
             String itemName,
             String category,
+            String subCategory,
             String brandName,
             String storageArea,
             String nutriUnit,
@@ -45,6 +47,7 @@ public class ItemRequestDto {
         this.groupId = groupId;
         this.itemName = itemName;
         this.category = category;
+        this.subCategory = subCategory;
         this.brandName = brandName;
         this.storageArea = storageArea;
         this.nutriUnit = nutriUnit;
