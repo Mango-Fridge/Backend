@@ -41,8 +41,9 @@ public enum ErrorCode {
     COOK_ITEM_NOT_FOUND("CI001", "해당 재료를 찾을 수 없습니다."),
 
     // Group
-    GROUP_NOT_FOUND("G001", "해당 그룹을 찾을 수 없습니다.");
-
+    GROUP_NOT_FOUND("G001", "해당 그룹을 찾을 수 없습니다."),
+    GROUP_INVALID_PREFIX("G002", "그룹 코드 접두사는 'GRP'이어야 합니다."),
+    GROUP_INVALID_TIMESTAMP("G003", "그룹 생성일자 초가 유효하지 않습니다.");
 
     private final String code;
     private final String message;

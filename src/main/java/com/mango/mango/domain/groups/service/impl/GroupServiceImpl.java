@@ -1,7 +1,7 @@
 package com.mango.mango.domain.groups.service.impl;
 
-import com.mango.mango.domain.groupUsers.entity.GroupUser;
-import com.mango.mango.domain.groupUsers.repository.GroupUserRepository;
+import com.mango.mango.domain.groupMembers.entity.GroupMember;
+import com.mango.mango.domain.groupMembers.repository.GroupMemberRepository;
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
@@ -19,9 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -31,25 +28,24 @@ public class GroupServiceImpl implements GroupService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private GroupUserRepository groupUserRepository;
+    private GroupMemberRepository groupMemberRepository;
 
 
     // [3] 메인화면 - 냉장고 그룹 불러오기
     @Override
-    public ResponseEntity<ApiResponse<List<GroupResponseDto>>> getGroupsByUserId(Long userId) {
+    public ResponseEntity<ApiResponse<GroupResponseDto>> getGroupsByUserId(Long userId) {
         boolean existsById = userRepository.existsById(userId);
         if(!existsById)     throw new CustomException(ErrorCode.USER_NOT_FOUND);
 
-        List<Group> groups = groupRepository.findByGroupMembersUserId(userId);
+        Group group = groupMemberRepository.findGroupByUserId(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
-        List<GroupResponseDto> groupResponseDtos = groups.stream()
-                .map(group -> new GroupResponseDto(
-                        group.getGroupId(),
-                        group.getGroupName()
-                ))
-                .collect(Collectors.toList());
+        GroupResponseDto groupResponseDto = GroupResponseDto.builder()
+                .groupId(group.getGroupId())
+                .groupName(group.getGroupName())
+                .build();
 
-        return ResponseEntity.ok(ApiResponse.success(groupResponseDtos));
+        return ResponseEntity.ok(ApiResponse.success(groupResponseDto));
     }
 
 
@@ -71,13 +67,13 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
         // 그룹장을 그룹 멤버로 추가
-        GroupUser groupUser = GroupUser.builder()
+        GroupMember groupUser = GroupMember.builder()
                 .group(newGroup)
                 .user(groupOwner)
                 .build();
 
         groupRepository.save(newGroup);
-        groupUserRepository.save(groupUser);
+        groupMemberRepository.save(groupUser);
 
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -85,10 +81,19 @@ public class GroupServiceImpl implements GroupService {
 
     // [5] 그룹 - 그룹 존재 여부 확인 (유효성)
     public ResponseEntity<ApiResponse<GroupExistResponseDto>> existGroupByCode(String groupCode) {
-        Long groupId = extractGroupIdFromCode(groupCode);
+        // GRP-49-00001를 "-" 기준으로 나누기
+        String[] groupCodeSplit = groupCode.split("-");
 
+        // 그룹코드[GRP] 처리
+        if(!groupCodeSplit[0].equals("GRP"))    throw new CustomException(ErrorCode.GROUP_INVALID_PREFIX);
+
+        // 그룹코드[00001] 처리
+        Long groupId = Long.valueOf(groupCodeSplit[2]);
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 그룹코드[49] 처리
+        if(Integer.parseInt(groupCodeSplit[1]) == group.getCreatedAt().getSecond())     throw new CustomException(ErrorCode.GROUP_INVALID_TIMESTAMP);
 
         GroupExistResponseDto groupExistResponseDto = GroupExistResponseDto.builder()
                 .groupName(group.getGroupName())
@@ -97,11 +102,5 @@ public class GroupServiceImpl implements GroupService {
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success(groupExistResponseDto));
-    }
-
-    
-    private Long extractGroupIdFromCode(String groupCode) {
-        String[] parts = groupCode.split("-");
-        return Long.valueOf(parts[2]);
     }
 }

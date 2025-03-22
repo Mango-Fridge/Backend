@@ -19,8 +19,7 @@ import java.util.Set;
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.groups.entity.Group;
-import com.mango.mango.domain.groupUsers.entity.GroupUser;
-
+import com.mango.mango.domain.groupMembers.entity.GroupMember;
 
 import jakarta.persistence.CascadeType;
 
@@ -53,7 +52,7 @@ public class User extends BaseEntity{
 
     // 사용자가 가입한 그룹 목록 (중간 엔티티를 통해 매핑)
     @OneToMany(mappedBy = "user")
-    private Set<GroupUser> groupMembers = new HashSet<>();
+    private Set<GroupMember> groupMembers = new HashSet<>();
 
     @Builder
     public User(String username, String email, String oauthProvider) {
