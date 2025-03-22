@@ -96,7 +96,7 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         // 그룹코드[49] 처리
-        if(Integer.parseInt(groupCodeSplit[1]) == group.getCreatedAt().getSecond())     throw new CustomException(ErrorCode.GROUP_INVALID_TIMESTAMP);
+        if(!(Integer.parseInt(groupCodeSplit[1]) == group.getCreatedAt().getSecond()))     throw new CustomException(ErrorCode.GROUP_INVALID_TIMESTAMP);
 
         GroupExistResponseDto groupExistResponseDto = GroupExistResponseDto.builder()
                 .groupName(group.getGroupName())
