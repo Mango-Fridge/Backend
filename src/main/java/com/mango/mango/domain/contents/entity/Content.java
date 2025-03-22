@@ -25,6 +25,9 @@ public class Content extends BaseEntity {
     @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
 
+    @Column(name = "SUB_CATEGORY", nullable = false, length = 50)
+    private String subCategory;
+
     @Column(name = "BRD_NM", nullable = false, length = 100)
     private String brandName;
 
@@ -77,6 +80,7 @@ public class Content extends BaseEntity {
     @Builder
     public Content(String contentName,
                    String category,
+                   String subCategory,
                    String brandName,
                    int count,
                    LocalDateTime regDate,
@@ -92,6 +96,7 @@ public class Content extends BaseEntity {
     {
         this.contentName = contentName;
         this.category = category;
+        this.subCategory = subCategory;
         this.brandName = brandName;
         this.count = count;
         this.regDate = regDate;

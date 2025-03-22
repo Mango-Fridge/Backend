@@ -2,7 +2,7 @@ package com.mango.mango.domain.groups.entity;
 
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.contents.entity.Content;
-import com.mango.mango.domain.groupUsers.entity.GroupUser;
+import com.mango.mango.domain.groupMembers.entity.GroupMember;
 import com.mango.mango.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,7 +30,7 @@ public class Group extends BaseEntity {
 
     // 그룹의 멤버들 (중간 엔티티를 통해 매핑)
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<GroupUser> groupMembers = new HashSet<>();
+    private Set<GroupMember> groupMembers = new HashSet<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Content> contents = new ArrayList<>();

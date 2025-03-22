@@ -41,8 +41,7 @@ dependencies {
 	implementation 'io.swagger.core.v3:swagger-annotations:2.2.20'
 	implementation 'io.swagger.core.v3:swagger-models:2.2.20'
 
-	//email
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	//redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 	//jwt

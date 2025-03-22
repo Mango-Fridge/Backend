@@ -21,6 +21,9 @@ public class Item extends BaseEntity {
     @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
 
+    @Column(name = "SUB_CATEGORY", nullable = false, length = 50)
+    private String subCategory;
+
     @Column(name = "BRD_NM", nullable = false, length = 100)
     private String brandName;
 
@@ -48,6 +51,7 @@ public class Item extends BaseEntity {
     @Builder
     public Item(String itemName,
                 String category,
+                String subCategory,
                 String brandName,
                 String storageArea,
                 String nutriUnit,
@@ -58,6 +62,7 @@ public class Item extends BaseEntity {
                 int nutriFat) {
         this.itemName = itemName;
         this.category = category;
+        this.subCategory = subCategory;
         this.brandName = brandName;
         this.storageArea = storageArea;
         this.nutriUnit = nutriUnit;

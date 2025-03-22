@@ -7,7 +7,8 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupResponseDto {
-    private Long groupId;
+public class GroupExistResponseDto {
     private String groupName;
+    private String groupOwnerName;
+    private int groupMemberCount;
 }

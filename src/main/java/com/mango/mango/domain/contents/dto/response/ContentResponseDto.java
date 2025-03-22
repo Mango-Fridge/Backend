@@ -13,6 +13,7 @@ public class ContentResponseDto {
     private Long contentId;
     private String contentName;
     private String category;
+    private String subCategory;
     private String brandName;
     private int count;
     private LocalDateTime regDate;
@@ -29,6 +30,7 @@ public class ContentResponseDto {
     public ContentResponseDto(Long contentId,
                               String contentName,
                               String category,
+                              String subCategory,
                               String brandName,
                               int count,
                               LocalDateTime regDate,
@@ -45,6 +47,7 @@ public class ContentResponseDto {
         this.contentId = contentId;
         this.contentName = contentName;
         this.category = category;
+        this.subCategory = subCategory;
         this.brandName = brandName;
         this.count = count;
         this.regDate = regDate;
