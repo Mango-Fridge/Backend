@@ -67,7 +67,7 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 이미 그룹에 속해있으면 만들 수 없음
-        if(groupMemberRepository.existsByUser(groupOwner))     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
+        // if(groupMemberRepository.existsByUser(groupOwner))     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
 
         // 그룹 생성 및 저장
         Group newGroup = Group.builder()
@@ -130,12 +130,10 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         // 이미 그룹에 속한 유저는 참여할 수 없음
-        if (groupMemberRepository.existsByUser(groupUser))       throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
-
+        // if (groupMemberRepository.existsByUser(groupUser))       throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
 
         // 이미 참여 신청한 유저는 제외
-        if (redisTemplate.opsForSet().isMember(groupId.toString(), userId.toString()))      throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP_HOPE);
-
+        // if (redisTemplate.opsForSet().isMember(groupId.toString(), userId.toString()))      throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP_HOPE);
 
         // groupId별 userId로 저장(만료일자 7일)
         redisTemplate.opsForSet().add(groupId.toString(), userId.toString());
