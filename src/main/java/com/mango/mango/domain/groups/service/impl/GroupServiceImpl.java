@@ -61,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         // 이미 그룹에 속해있으면 만들 수 없음
-        if(!groupMemberRepository.existsByUser(groupOwner))     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
+        if(groupMemberRepository.existsByUser(groupOwner))     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
 
         // 그룹 생성 및 저장
         Group newGroup = Group.builder()
