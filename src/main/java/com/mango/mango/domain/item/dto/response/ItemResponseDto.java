@@ -9,6 +9,7 @@ public class ItemResponseDto {
     private Long itemId;
     private String itemName;
     private String category;
+    private String subCategory;
     private String brandName;
     private String NutriUnit;
     private int NutriCapacity;
@@ -22,6 +23,7 @@ public class ItemResponseDto {
             Long itemId,
             String itemName,
             String category,
+            String subCategory,
             String brandName,
             String nutriUnit,
             int nutriCapacity,
@@ -32,6 +34,7 @@ public class ItemResponseDto {
     ) {
         this.itemId = itemId;
         this.category = category;
+        this.subCategory = subCategory;
         this.itemName = itemName;
         this.brandName = brandName;
         this.NutriUnit = nutriUnit;

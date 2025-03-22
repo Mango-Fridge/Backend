@@ -1,5 +1,6 @@
 package com.mango.mango.domain.groups.service.impl;
 
+import com.mango.mango.domain.groupMembers.repository.GroupMemberRepository;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groups.repository.GroupRepository;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -32,6 +34,9 @@ public class GroupServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private GroupMemberRepository groupMemberRepository;
 
     @InjectMocks
     private GroupServiceImpl groupService;
@@ -68,15 +73,15 @@ public class GroupServiceImplTest {
     public void getGroupsByUserId_그룹이_없는_경우() {
         // Given
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(groupRepository.findByGroupMembersUserId(anyLong())).thenReturn(List.of());
+        when(groupMemberRepository.findGroupByUserId(anyLong())).thenReturn(Optional.empty());
 
         // When & Then
-        ResponseEntity<ApiResponse<List<GroupResponseDto>>> response = groupService.getGroupsByUserId(1L);
+        CustomException exception = assertThrows(CustomException.class, () -> {
+            groupService.getGroupsByUserId(1L);
+        });
 
         // 예외 메시지 검증
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody().getData().isEmpty());
+        assertEquals(ErrorCode.GROUP_NOT_FOUND, exception.getErrorCode());
     }
 
 
@@ -85,16 +90,14 @@ public class GroupServiceImplTest {
     public void getGroupsByUserId_성공한_경우() {
         // Given
         when(userRepository.existsById(anyLong())).thenReturn(true);
-        when(groupRepository.findByGroupMembersUserId(anyLong())).thenReturn(groupList);
+        when(groupMemberRepository.findGroupByUserId(anyLong())).thenReturn(Optional.of(group1));
 
         // When & Then
-        ResponseEntity<ApiResponse<List<GroupResponseDto>>> response = groupService.getGroupsByUserId(1L);
+        ResponseEntity<ApiResponse<GroupResponseDto>> response = groupService.getGroupsByUserId(1L);
 
         // 예외 메시지 검증
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(2, response.getBody().getData().size());
-        assertEquals("Group 1", response.getBody().getData().get(0).getGroupName());
-        assertEquals("Group 2", response.getBody().getData().get(1).getGroupName());
+        assertEquals("Group 1", response.getBody().getData().getGroupName());
     }
 }

@@ -55,7 +55,11 @@ public class ContentServiceImpl implements ContentService {
     @Transactional
     public ResponseEntity<ApiResponse<?>> updateContentCounts(ContentRequestDto req) {
         for (ContentRequestDto.ContentUpdateInfo info : req.getContents()) {
-            // contentId 기반으로 Content 조회
+            // 그룹 확인
+            groupRepository.findById(info.getGroupId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+            // 콘텐츠 확인
             Content content = contentRepository.findById(info.getContentId())
                     .orElseThrow(() -> new CustomException(ErrorCode.CONTENT_NOT_FOUND));
 
@@ -80,6 +84,7 @@ public class ContentServiceImpl implements ContentService {
                 content.getContentId(),
                 content.getContentName(),
                 content.getCategory(),
+                content.getSubCategory(),
                 content.getBrandName(),
                 content.getCount(),
                 content.getRegDate(),
