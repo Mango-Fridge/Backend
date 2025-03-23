@@ -14,4 +14,5 @@ public interface GroupService {
     ResponseEntity<ApiResponse<GroupExistResponseDto>> existGroupByCode(String groupCode);
     ResponseEntity<ApiResponse<?>> joinGroup(GroupRequestDto req);
     ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(GroupRequestDto req);
+    ResponseEntity<ApiResponse<?>> deleteGroupMember(GroupRequestDto req);
 }

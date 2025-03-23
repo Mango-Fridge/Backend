@@ -49,4 +49,10 @@ public class GroupController {
     public ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(@RequestBody GroupRequestDto req) {
         return groupService.getGroupInfo(req);
     }
+
+    @Operation(summary = "[5] 그룹 - 그룹 나가기")
+    @DeleteMapping("/user")
+    public ResponseEntity<ApiResponse<?>> deleteGroupMember(@RequestBody GroupRequestDto req) {
+        return groupService.deleteGroupMember(req);
+    }
 }

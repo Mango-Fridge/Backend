@@ -201,4 +201,41 @@ public class GroupServiceImpl implements GroupService {
 
         return ResponseEntity.ok(ApiResponse.success(groupInfoResponseDto));
     }
+
+
+    // [5] 그룹 - 그룹 나가기
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponse<?>> deleteGroupMember(GroupRequestDto req) {
+        Long groupId = req.getGroupId();
+        Long userId = req.getUserId();
+        String key = "groupId:" + groupId;
+
+        // 유저 존재 여부 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 그룹 존재 여부 확인
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 그룹장인 경우
+        if(group.getGroupOwner().getId() == userId)     throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
+
+        // Redis에 저장된 그룹별 신청 유저들의 ID
+        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(key)
+                .stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+
+        // 신청 유저에 속해있는 경우
+        if(groupHopeUserIds.contains(userId)){
+            redisTemplate.opsForSet().remove(key, userId.toString());
+            return ResponseEntity.ok(ApiResponse.success(null));
+        }
+
+        // 그룹에 속해있는 경우
+        groupMemberRepository.deleteByGroupAndUser(group, user);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
 }
