@@ -1,8 +1,9 @@
 package com.mango.mango.domain.groups.controller;
 
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
-import com.mango.mango.domain.groups.dto.reqeust.JoinGroupRequestDto;
+import com.mango.mango.domain.groups.dto.reqeust.GroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
+import com.mango.mango.domain.groups.dto.response.GroupInfoResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.service.GroupService;
 import com.mango.mango.global.response.ApiResponse;
@@ -39,7 +40,13 @@ public class GroupController {
 
     @Operation(summary = "[5] 그룹 - 그룹 참여하기")
     @PostMapping("/join")
-    public ResponseEntity<ApiResponse<?>> joinGroup(@RequestBody JoinGroupRequestDto req) {
+    public ResponseEntity<ApiResponse<?>> joinGroup(@RequestBody GroupRequestDto req) {
         return groupService.joinGroup(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 정보 가져오기")
+    @PostMapping("/id")
+    public ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(@RequestBody GroupRequestDto req) {
+        return groupService.getGroupInfo(req);
     }
 }

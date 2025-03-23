@@ -3,8 +3,9 @@ package com.mango.mango.domain.groups.service.impl;
 import com.mango.mango.domain.groupMembers.entity.GroupMember;
 import com.mango.mango.domain.groupMembers.repository.GroupMemberRepository;
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
-import com.mango.mango.domain.groups.dto.reqeust.JoinGroupRequestDto;
+import com.mango.mango.domain.groups.dto.reqeust.GroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
+import com.mango.mango.domain.groups.dto.response.GroupInfoResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groups.repository.GroupRepository;
@@ -21,8 +22,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,9 +67,6 @@ public class GroupServiceImpl implements GroupService {
         // 유저 존재 여부 확인
         User groupOwner = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        // 이미 그룹에 속해있으면 만들 수 없음
-        // if(groupMemberRepository.existsByUser(groupOwner))     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
 
         // 그룹 생성 및 저장
         Group newGroup = Group.builder()
@@ -117,7 +116,7 @@ public class GroupServiceImpl implements GroupService {
     // [5] 그룹 - 그룹 참여하기
     @Transactional
     @Override
-    public ResponseEntity<ApiResponse<?>> joinGroup(JoinGroupRequestDto req) {
+    public ResponseEntity<ApiResponse<?>> joinGroup(GroupRequestDto req) {
         Long userId = req.getUserId();
         Long groupId = req.getGroupId();
 
@@ -129,16 +128,77 @@ public class GroupServiceImpl implements GroupService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
-        // 이미 그룹에 속한 유저는 참여할 수 없음
-        // if (groupMemberRepository.existsByUser(groupUser))       throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
-
-        // 이미 참여 신청한 유저는 제외
-        // if (redisTemplate.opsForSet().isMember(groupId.toString(), userId.toString()))      throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP_HOPE);
-
         // groupId별 userId로 저장(만료일자 7일)
-        redisTemplate.opsForSet().add(groupId.toString(), userId.toString());
-        redisTemplate.expire(groupId.toString(), 7, TimeUnit.DAYS);
+        redisTemplate.opsForSet().add("groupId:" + groupId, userId.toString());
+        redisTemplate.opsForSet().add("userId:" + userId, groupId.toString());
+        redisTemplate.expire("groupId:" + groupId, 7, TimeUnit.DAYS);
+        redisTemplate.expire("userId:" + userId, 7, TimeUnit.DAYS);
 
         return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+
+    // [5] 그룹 - 그룹 정보 가져오기
+    @Override
+    public ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(GroupRequestDto req) {
+        Long groupId = req.getGroupId();
+        Long userId = req.getUserId();
+
+        // 유저 존재 여부 확인
+        User visitUser = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 그룹 존재 여부 확인
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 그룹 코드 생성
+        String groupCode = String.format("GRP-%02d-%05d", group.getCreatedAt().getSecond(), groupId);
+
+        // Redis에 저장된 그룹별 신청 유저들의 ID
+        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members("groupId:" + groupId)
+                .stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+
+        // 현재 유저가 신청 목록에 포함된 경우, groupUsers와 groupHopeUsers를 null로 설정하고 즉시 반환
+        if (groupHopeUserIds.contains(userId)) {
+            return ResponseEntity.ok(ApiResponse.success(
+                    GroupInfoResponseDto.builder()
+                            .groupId(groupId)
+                            .groupCode(groupCode)
+                            .groupName(group.getGroupName())
+                            .groupOwnerId(group.getGroupOwner().getId())
+                            .groupUsers(null)
+                            .groupHopeUsers(null)
+                            .build()
+            ));
+        }
+
+        // 신청한 유저 리스트
+        List<GroupInfoResponseDto.GroupHopeUser> groupHopeUsers = userRepository.findAllById(groupHopeUserIds)
+                .stream()
+                .map(user -> new GroupInfoResponseDto.GroupHopeUser(user.getId(), user.getUsername()))
+                .toList();
+
+        // 그룹 소속 유저
+        List<GroupInfoResponseDto.GroupUser> groupUsers = groupMemberRepository.getUsersByGroupId(groupId)
+                .stream()
+                .map(user -> new GroupInfoResponseDto.GroupUser(user.getId(), user.getUsername()))
+                .toList();
+
+        // 그룹에 속해있지 않은 유저인 경우 처리
+        if (groupUsers.stream().noneMatch(user -> user.getUserId().equals(userId)))     throw new CustomException(ErrorCode.USER_NOY_ALREADY_IN_GROUP);
+
+        GroupInfoResponseDto groupInfoResponseDto = GroupInfoResponseDto.builder()
+                .groupId(groupId)
+                .groupCode(groupCode)
+                .groupName(group.getGroupName())
+                .groupOwnerId(group.getGroupOwner().getId())
+                .groupUsers(groupUsers)
+                .groupHopeUsers(groupHopeUsers)
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.success(groupInfoResponseDto));
     }
 }
