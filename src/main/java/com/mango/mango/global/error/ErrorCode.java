@@ -46,7 +46,8 @@ public enum ErrorCode {
     GROUP_INVALID_PREFIX("G003", "그룹 코드 접두사는 'GRP'이어야 합니다."),
     GROUP_INVALID_TIMESTAMP("G004", "그룹 생성일자 초가 유효하지 않습니다."),
     GROUP_OWNER_CANNOT_LEAVE("G005", "그룹장은 그룹을 나갈 수 없습니다."),
-    GROUP_OWNER_ALREADY_EXISTS("G006", "해당 유저는 이미 그룹장입니다.");
+    GROUP_OWNER_ALREADY_EXISTS("G006", "해당 유저는 이미 그룹장입니다."),
+    USER_NOT_ALREADY_IN_GROUP_HOPE("G007", "해당 유저는 그룹에 신청하지 않았습니다.");
 
     private final String code;
     private final String message;

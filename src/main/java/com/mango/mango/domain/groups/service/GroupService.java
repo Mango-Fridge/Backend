@@ -16,4 +16,5 @@ public interface GroupService {
     ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(GroupRequestDto req);
     ResponseEntity<ApiResponse<?>> deleteGroupMember(GroupRequestDto req);
     ResponseEntity<ApiResponse<?>> updateGroupOwner(GroupRequestDto req);
+    ResponseEntity<ApiResponse<?>> rejectGroupHopeUser(GroupRequestDto req);
 }
