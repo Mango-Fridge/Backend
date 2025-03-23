@@ -119,6 +119,8 @@ public class GroupServiceImpl implements GroupService {
     public ResponseEntity<ApiResponse<?>> joinGroup(GroupRequestDto req) {
         Long userId = req.getUserId();
         Long groupId = req.getGroupId();
+        String groupKey = "groupId:" + groupId;
+        String userKey = "userId:" + userId;
 
         // 유저 존재 여부 확인
         User groupUser = userRepository.findById(userId)
@@ -129,10 +131,10 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         // groupId별 userId로 저장(만료일자 7일)
-        redisTemplate.opsForSet().add("groupId:" + groupId, userId.toString());
-        redisTemplate.opsForSet().add("userId:" + userId, groupId.toString());
-        redisTemplate.expire("groupId:" + groupId, 7, TimeUnit.DAYS);
-        redisTemplate.expire("userId:" + userId, 7, TimeUnit.DAYS);
+        redisTemplate.opsForSet().add(groupKey, userId.toString());
+        redisTemplate.opsForSet().add(userKey, groupId.toString());
+        redisTemplate.expire(groupKey, 7, TimeUnit.DAYS);
+        redisTemplate.expire(userKey, 7, TimeUnit.DAYS);
 
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -143,6 +145,7 @@ public class GroupServiceImpl implements GroupService {
     public ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(GroupRequestDto req) {
         Long groupId = req.getGroupId();
         Long userId = req.getUserId();
+        String groupKey = "groupId:" + groupId;
 
         // 유저 존재 여부 확인
         User visitUser = userRepository.findById(userId)
@@ -156,7 +159,7 @@ public class GroupServiceImpl implements GroupService {
         String groupCode = String.format("GRP-%02d-%05d", group.getCreatedAt().getSecond(), groupId);
 
         // Redis에 저장된 그룹별 신청 유저들의 ID
-        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members("groupId:" + groupId)
+        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey)
                 .stream()
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
@@ -209,7 +212,8 @@ public class GroupServiceImpl implements GroupService {
     public ResponseEntity<ApiResponse<?>> deleteGroupMember(GroupRequestDto req) {
         Long groupId = req.getGroupId();
         Long userId = req.getUserId();
-        String key = "groupId:" + groupId;
+        String groupKey = "groupId:" + groupId;
+        String userKey = "userId:" + userId;
 
         // 유저 존재 여부 확인
         User user = userRepository.findById(userId)
@@ -223,15 +227,15 @@ public class GroupServiceImpl implements GroupService {
         if(group.getGroupOwner().getId() == userId)     throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
 
         // Redis에 저장된 그룹별 신청 유저들의 ID
-        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(key)
+        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey)
                 .stream()
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
 
         // 신청 유저에 속해있는 경우
         if(groupHopeUserIds.contains(userId)){
-            redisTemplate.opsForSet().remove(key, userId.toString());
-            redisTemplate.opsForSet().remove("userId:", groupId.toString());
+            redisTemplate.opsForSet().remove(groupKey, userId.toString());
+            redisTemplate.opsForSet().remove(userKey, groupId.toString());
             return ResponseEntity.ok(ApiResponse.success(null));
         }
 
@@ -275,7 +279,8 @@ public class GroupServiceImpl implements GroupService {
     public ResponseEntity<ApiResponse<?>> rejectGroupHopeUser(GroupRequestDto req) {
         Long groupId = req.getGroupId();
         Long userId = req.getUserId();
-        String key = "groupId:" + groupId;
+        String groupKey = "groupId:" + groupId;
+        String userKey = "userId:" + userId;
 
         // 유저 존재 여부 확인
         User user = userRepository.findById(userId)
@@ -286,19 +291,48 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         // Redis에 저장된 그룹별 신청 유저들의 ID
-        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(key)
-                .stream()
-                .map(Long::parseLong)
-                .collect(Collectors.toSet());
-
-        // 신청 유저에 속해있는 경우
-        if(groupHopeUserIds.contains(userId)){
-            redisTemplate.opsForSet().remove(key, userId.toString());
-            redisTemplate.opsForSet().remove("userId:", groupId.toString());
-            return ResponseEntity.ok(ApiResponse.success(null));
-        } else{
-            // 신청하지 않은 경우
+        Set<String> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey);
+        if (groupHopeUserIds == null || !groupHopeUserIds.contains(userId.toString())) {
             throw new CustomException(ErrorCode.USER_NOT_ALREADY_IN_GROUP_HOPE);
         }
+
+        // Redis에서 정보 삭제
+        redisTemplate.opsForSet().remove(groupKey, userId.toString());
+        redisTemplate.opsForSet().remove(userKey, groupId.toString());
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+
+    // [5] 그룹 - 그룹 참여 승인 요청 (승인)
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponse<?>> approveGroupHopeUser(GroupRequestDto req) {
+        Long groupId = req.getGroupId();
+        Long userId = req.getUserId();
+        String groupKey = "groupId:" + groupId;
+        String userKey = "userId:" + userId;
+
+        // 유저 존재 여부 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 그룹 존재 여부 확인
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // Redis에 저장된 그룹별 신청 유저들의 ID 확인
+        Set<String> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey);
+        if (groupHopeUserIds == null || !groupHopeUserIds.contains(userId.toString())) {
+            throw new CustomException(ErrorCode.USER_NOT_ALREADY_IN_GROUP_HOPE);
+        }
+
+        // Redis에서 정보 삭제
+        redisTemplate.opsForSet().remove(groupKey, userId.toString());
+        redisTemplate.opsForSet().remove(userKey, groupId.toString());
+
+        GroupMember groupMember = new GroupMember(group, user);
+        groupMemberRepository.save(groupMember);
+
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }

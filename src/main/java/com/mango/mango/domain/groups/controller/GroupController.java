@@ -67,4 +67,10 @@ public class GroupController {
     public ResponseEntity<ApiResponse<?>> rejectGroupHopeUser(@RequestBody GroupRequestDto req) {
         return groupService.rejectGroupHopeUser(req);
     }
+
+    @Operation(summary = "[5] 그룹 - 그룹 참여 승인 요청 (승인)")
+    @PutMapping("/approve")
+    public ResponseEntity<ApiResponse<?>> approveGroupHopeUser(@RequestBody GroupRequestDto req) {
+        return groupService.approveGroupHopeUser(req);
+    }
 }
