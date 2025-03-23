@@ -55,4 +55,10 @@ public class GroupController {
     public ResponseEntity<ApiResponse<?>> deleteGroupMember(@RequestBody GroupRequestDto req) {
         return groupService.deleteGroupMember(req);
     }
+
+    @Operation(summary = "[5] 그룹 - 그룹장 임명")
+    @PutMapping("/owner")
+    public ResponseEntity<ApiResponse<?>> updateGroupOwner(@RequestBody GroupRequestDto req) {
+        return groupService.updateGroupOwner(req);
+    }
 }

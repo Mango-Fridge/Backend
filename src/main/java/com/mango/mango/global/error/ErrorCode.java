@@ -42,10 +42,11 @@ public enum ErrorCode {
 
     // Group
     GROUP_NOT_FOUND("G001", "해당 그룹을 찾을 수 없습니다."),
-    USER_NOY_ALREADY_IN_GROUP("G002", "사용자가 그룹에 속해 있지 않습니다."),
+    USER_NOT_ALREADY_IN_GROUP("G002", "사용자가 그룹에 속해 있지 않습니다."),
     GROUP_INVALID_PREFIX("G003", "그룹 코드 접두사는 'GRP'이어야 합니다."),
     GROUP_INVALID_TIMESTAMP("G004", "그룹 생성일자 초가 유효하지 않습니다."),
-    GROUP_OWNER_CANNOT_LEAVE("G005", "그룹장은 그룹을 나갈 수 없습니다.");
+    GROUP_OWNER_CANNOT_LEAVE("G005", "그룹장은 그룹을 나갈 수 없습니다."),
+    GROUP_OWNER_ALREADY_EXISTS("G006", "해당 유저는 이미 그룹장입니다.");
 
     private final String code;
     private final String message;

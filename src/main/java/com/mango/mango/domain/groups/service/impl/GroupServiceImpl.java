@@ -188,7 +188,7 @@ public class GroupServiceImpl implements GroupService {
                 .toList();
 
         // 그룹에 속해있지 않은 유저인 경우 처리
-        if (groupUsers.stream().noneMatch(user -> user.getUserId().equals(userId)))     throw new CustomException(ErrorCode.USER_NOY_ALREADY_IN_GROUP);
+        if (groupUsers.stream().noneMatch(user -> user.getUserId().equals(userId)))     throw new CustomException(ErrorCode.USER_NOT_ALREADY_IN_GROUP);
 
         GroupInfoResponseDto groupInfoResponseDto = GroupInfoResponseDto.builder()
                 .groupId(groupId)
@@ -236,6 +236,35 @@ public class GroupServiceImpl implements GroupService {
 
         // 그룹에 속해있는 경우
         groupMemberRepository.deleteByGroupAndUser(group, user);
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+
+
+    // [5] 그룹 - 그룹장 임명
+    @Transactional
+    @Override
+    public ResponseEntity<ApiResponse<?>> updateGroupOwner(GroupRequestDto req) {
+        Long groupId = req.getGroupId();
+        Long userId = req.getUserId();
+
+        // 유저 존재 여부 확인
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 그룹 존재 여부 확인
+        Group group = groupRepository.findById(groupId)
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 이미 그룹장인 경우
+        if(group.getGroupOwner().equals(user))      throw new CustomException(ErrorCode.GROUP_OWNER_ALREADY_EXISTS);
+
+        // 그룹에 소속된 유저가 아닌 경우
+        if (group.getGroupMembers().stream().noneMatch(gm -> gm.getUser().equals(user)))        throw new CustomException(ErrorCode.USER_NOT_ALREADY_IN_GROUP);
+
+        // 그룹장의 변경을 위해, 기존 그룹장과 새로운 그룹장의 관계를 업데이트한다.
+        group.setGroupOwner(user);      // 그룹장 변경
+        groupRepository.save(group);    // 변경 사항 저장
+
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
