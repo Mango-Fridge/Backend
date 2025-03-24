@@ -1,8 +1,9 @@
 package com.mango.mango.domain.groups.controller;
 
 import com.mango.mango.domain.groups.dto.reqeust.CreateGroupRequestDto;
-import com.mango.mango.domain.groups.dto.reqeust.JoinGroupRequestDto;
+import com.mango.mango.domain.groups.dto.reqeust.GroupRequestDto;
 import com.mango.mango.domain.groups.dto.response.GroupExistResponseDto;
+import com.mango.mango.domain.groups.dto.response.GroupInfoResponseDto;
 import com.mango.mango.domain.groups.dto.response.GroupResponseDto;
 import com.mango.mango.domain.groups.service.GroupService;
 import com.mango.mango.global.response.ApiResponse;
@@ -39,7 +40,37 @@ public class GroupController {
 
     @Operation(summary = "[5] 그룹 - 그룹 참여하기")
     @PostMapping("/join")
-    public ResponseEntity<ApiResponse<?>> joinGroup(@RequestBody JoinGroupRequestDto req) {
+    public ResponseEntity<ApiResponse<?>> joinGroup(@RequestBody GroupRequestDto req) {
         return groupService.joinGroup(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 정보 가져오기")
+    @PostMapping("/id")
+    public ResponseEntity<ApiResponse<GroupInfoResponseDto>> getGroupInfo(@RequestBody GroupRequestDto req) {
+        return groupService.getGroupInfo(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 나가기")
+    @DeleteMapping("/user")
+    public ResponseEntity<ApiResponse<?>> deleteGroupMember(@RequestBody GroupRequestDto req) {
+        return groupService.deleteGroupMember(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹장 임명")
+    @PutMapping("/owner")
+    public ResponseEntity<ApiResponse<?>> updateGroupOwner(@RequestBody GroupRequestDto req) {
+        return groupService.updateGroupOwner(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 참여 승인 요청 (거절)")
+    @PutMapping("/reject")
+    public ResponseEntity<ApiResponse<?>> rejectGroupHopeUser(@RequestBody GroupRequestDto req) {
+        return groupService.rejectGroupHopeUser(req);
+    }
+
+    @Operation(summary = "[5] 그룹 - 그룹 참여 승인 요청 (승인)")
+    @PutMapping("/approve")
+    public ResponseEntity<ApiResponse<?>> approveGroupHopeUser(@RequestBody GroupRequestDto req) {
+        return groupService.approveGroupHopeUser(req);
     }
 }

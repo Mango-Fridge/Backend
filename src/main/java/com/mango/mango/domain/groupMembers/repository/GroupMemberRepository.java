@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,5 +16,8 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     @Query("SELECT gm.group FROM GroupMember gm WHERE gm.user.id = :userId")
     Optional<Group> findGroupByUserId(@Param("userId") Long userId);
 
-    Boolean existsByUser(User user);
+    @Query("SELECT gm.user FROM GroupMember gm WHERE gm.group.id = :groupId")
+    List<User> getUsersByGroupId(@Param("groupId") Long groupId);
+
+    void deleteByGroupAndUser(Group group, User user);
 }
