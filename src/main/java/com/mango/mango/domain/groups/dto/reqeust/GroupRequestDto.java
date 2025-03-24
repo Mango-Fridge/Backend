@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class JoinGroupRequestDto {
+public class GroupRequestDto {
     private Long userId;
     private Long groupId;
 }
