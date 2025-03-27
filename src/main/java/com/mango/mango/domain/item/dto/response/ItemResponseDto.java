@@ -16,7 +16,7 @@ public class ItemResponseDto {
     private int NutriKcal;
     private int NutriCarbohydrate;
     private int NutriProtein;
-    private int Nutrifat;
+    private int NutriFat;
 
     @Builder
     public ItemResponseDto(
@@ -30,7 +30,7 @@ public class ItemResponseDto {
             int nutriKcal,
             int nutriCarbohydrate,
             int nutriProtein,
-            int nutrifat
+            int nutriFat
     ) {
         this.itemId = itemId;
         this.category = category;
@@ -42,6 +42,6 @@ public class ItemResponseDto {
         this.NutriKcal = nutriKcal;
         this.NutriCarbohydrate = nutriCarbohydrate;
         this.NutriProtein = nutriProtein;
-        this.Nutrifat = nutrifat;
+        this.NutriFat = nutriFat;
     }
 }

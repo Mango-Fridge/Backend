@@ -2,6 +2,7 @@ package com.mango.mango.domain.groups.entity;
 
 import com.mango.mango.domain.base.entity.BaseEntity;
 import com.mango.mango.domain.contents.entity.Content;
+import com.mango.mango.domain.cook.entity.Cook;
 import com.mango.mango.domain.groupMembers.entity.GroupMember;
 import com.mango.mango.domain.user.entity.User;
 import jakarta.persistence.*;
@@ -34,6 +35,9 @@ public class Group extends BaseEntity {
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Content> contents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cook> cooks = new ArrayList<>();
 
     @Builder
     public Group(String groupName, User groupOwner, Content content) {
