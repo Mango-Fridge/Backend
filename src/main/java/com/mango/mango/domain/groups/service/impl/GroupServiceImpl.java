@@ -224,7 +224,15 @@ public class GroupServiceImpl implements GroupService {
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
 
         // 그룹장인 경우
-        if(group.getGroupOwner().getId() == userId)     throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
+        if(group.getGroupOwner().getId() == userId){
+            // 그룹장만 있는 경우
+            if(group.getGroupMembers().size() == 1){
+                groupRepository.delete(group);
+                return ResponseEntity.ok(ApiResponse.success(null));
+            }
+            // 그룹장 외 멤버가 있는 경우
+            else                                            throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
+        }
 
         // Redis에 저장된 그룹별 신청 유저들의 ID
         Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey)

@@ -72,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
                 .nutriKcal(item.getNutriKcal())
                 .nutriCarbohydrate(item.getNutriCarbohydrate())
                 .nutriProtein(item.getNutriProtein())
-                .nutrifat(item.getNutriFat())
+                .nutriFat(item.getNutriFat())
                 .build();
 
         return ResponseEntity.ok(ApiResponse.success(res));

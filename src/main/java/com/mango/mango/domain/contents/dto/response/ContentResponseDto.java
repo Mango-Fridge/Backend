@@ -25,7 +25,7 @@ public class ContentResponseDto {
     private int NutriKcal;
     private int NutriCarbohydrate;
     private int NutriProtein;
-    private int Nutrifat;
+    private int NutriFat;
 
     public ContentResponseDto(Long contentId,
                               String contentName,
@@ -42,7 +42,7 @@ public class ContentResponseDto {
                               int nutriKcal,
                               int nutriCarbohydrate,
                               int nutriProtein,
-                              int nutrifat)
+                              int nutriFat)
     {
         this.contentId = contentId;
         this.contentName = contentName;
@@ -59,6 +59,6 @@ public class ContentResponseDto {
         NutriKcal = nutriKcal;
         NutriCarbohydrate = nutriCarbohydrate;
         NutriProtein = nutriProtein;
-        Nutrifat = nutrifat;
+        NutriFat = nutriFat;
     }
 }

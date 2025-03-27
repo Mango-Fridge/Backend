@@ -67,8 +67,12 @@ public class ContentServiceImpl implements ContentService {
             int updateCnt = content.getCount() + info.getCount();
             if (updateCnt < 0)      throw new CustomException(ErrorCode.INVALID_ITEM_COUNT);
 
-            content.setCount(updateCnt);
-            contentRepository.save(content);
+            // 0개인 경우 content 삭제
+            if(updateCnt == 0)     contentRepository.delete(content);
+            else{
+                content.setCount(updateCnt);
+                contentRepository.save(content);
+            }
         }
         return ResponseEntity.ok(ApiResponse.success(null));
     }
