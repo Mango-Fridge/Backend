@@ -16,7 +16,6 @@ import com.mango.mango.global.error.CustomException;
 import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,12 +29,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class GroupServiceImpl implements GroupService {
-    @Autowired
-    private GroupRepository groupRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private GroupMemberRepository groupMemberRepository;
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+    private final GroupMemberRepository groupMemberRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
 
