@@ -327,7 +327,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     // 매일 자정 당일 공공데이터 Load
-    @Scheduled(cron = "0 13 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void scheduledLoadItemDataFromOpenAPI() {
         log.info("매일 자정 데이터 갱신 시작: {}", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
