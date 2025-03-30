@@ -314,7 +314,9 @@ public class ItemServiceImpl implements ItemService {
     @PostConstruct
     @Transactional
     public void init() {
-        if (itemRepository.count() == 0) {
+        // 공공데이터의 전체 데이터를 사용하고 싶으면 아래줄 주석 해제 후 if(false){ 부분 주석 처리
+        // if (itemRepository.count() == 0) {
+        if(false){
             log.info("Item DB가 비어있습니다. 초기 데이터를 불러옵니다.");
             Instant start = Instant.now();
             loadItemDataFromOpenAPI(null);
