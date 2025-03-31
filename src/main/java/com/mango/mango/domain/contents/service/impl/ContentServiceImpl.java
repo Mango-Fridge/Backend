@@ -11,7 +11,6 @@ import com.mango.mango.global.error.CustomException;
 import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ContentServiceImpl implements ContentService {
-    @Autowired
-    private ContentRepository contentRepository;
-    @Autowired
-    private GroupRepository groupRepository;
+    private final ContentRepository contentRepository;
+    private final GroupRepository groupRepository;
 
 
     // [3] 메인화면 - 메인화면 냉장고 그룹에 따른 내용물 노출

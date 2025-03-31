@@ -8,6 +8,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Table(name = "items")
 public class Item extends BaseEntity {
     @Id
@@ -15,37 +16,48 @@ public class Item extends BaseEntity {
     @Column(name = "ITEM_ID")
     private Long itemId;
 
+    @EqualsAndHashCode.Include
     @Column(name = "ITEM_NM", nullable = false, length = 100)
     private String itemName;
 
+    @EqualsAndHashCode.Include
     @Column(name = "CATEGORY", nullable = false, length = 50)
     private String category;
 
+    @EqualsAndHashCode.Include
     @Column(name = "SUB_CATEGORY", nullable = false, length = 50)
     private String subCategory;
 
+    @EqualsAndHashCode.Include
     @Column(name = "BRD_NM", nullable = false, length = 100)
     private String brandName;
 
-    @Column(name = "STORAGE_AREA", nullable = false, length = 50)
+    @EqualsAndHashCode.Include
+    @Column(name = "STORAGE_AREA", length = 50)
     private String storageArea;
 
-    @Column(name = "NUTRI_UNIT", length = 10)
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_UNIT", nullable = false, length = 10)
     private String nutriUnit;
 
-    @Column(name = "NUTRI_CAPACITY")
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_CAPACITY", nullable = false)
     private int nutriCapacity;
 
-    @Column(name = "NUTRI_KCAL")
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_KCAL", nullable = false)
     private int nutriKcal;
 
-    @Column(name = "NUTRI_CARBOHYDRATE")
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_CARBOHYDRATE", nullable = false)
     private int nutriCarbohydrate;
 
-    @Column(name = "NUTRI_PROTEIN")
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_PROTEIN", nullable = false)
     private int nutriProtein;
 
-    @Column(name = "NUTRI_FAT")
+    @EqualsAndHashCode.Include
+    @Column(name = "NUTRI_FAT", nullable = false)
     private int nutriFat;
 
     @Builder
