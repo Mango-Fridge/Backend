@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.mango.mango.domain.cook.dto.request.CookRequestDto;
+import com.mango.mango.domain.cook.dto.request.CookRequestDto2;
 import com.mango.mango.domain.cook.dto.request.CookUpdateRequestDto;
 import com.mango.mango.domain.cook.dto.response.CookDetailResponseDto;
 import com.mango.mango.domain.cook.dto.response.CookSummaryResponseDto;
@@ -38,6 +39,20 @@ public class CookController{
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<Void>> addNewCook(@Valid @RequestBody CookRequestDto request) throws Exception{
         return cookService.addNewCook(request);
+    }
+
+    /**
+     * 신규 요리 추가 - 요리 아이템도 함께 추가
+     * @param cookRequestDto
+     * @return
+     */
+    @Operation(
+        summary = "요리 - 요리 추가2",
+        description = "그룹에 신규 요리를 요리 아이템과 함께 추가한다."
+    )
+    @PostMapping("/add2")
+    public ResponseEntity<ApiResponse<Void>> addNewCook2(@Valid @RequestBody CookRequestDto2 request) throws Exception{
+        return cookService.addNewCook2(request);
     }
 
     /**
