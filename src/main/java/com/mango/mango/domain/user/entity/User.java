@@ -54,7 +54,7 @@ public class User extends BaseEntity{
 
     // 사용자가 가입한 그룹 목록 (중간 엔티티를 통해 매핑)
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private GroupMember groupMembㅕer;
+    private GroupMember groupMember;
 
     @Builder
     public User(String username, String email, String oauthProvider) {
