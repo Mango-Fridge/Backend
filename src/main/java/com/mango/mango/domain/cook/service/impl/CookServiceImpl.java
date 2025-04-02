@@ -7,12 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.mango.mango.domain.cook.dto.request.CookRequestDto;
+import com.mango.mango.domain.cook.dto.request.CookRequestDto2;
 import com.mango.mango.domain.cook.dto.request.CookUpdateRequestDto;
 import com.mango.mango.domain.cook.dto.response.CookDetailResponseDto;
 import com.mango.mango.domain.cook.dto.response.CookSummaryResponseDto;
 import com.mango.mango.domain.cook.entity.Cook;
 import com.mango.mango.domain.cook.repository.CookRepository;
 import com.mango.mango.domain.cook.service.CookService;
+import com.mango.mango.domain.cookItem.entity.CookItem;
 import com.mango.mango.domain.cookItem.repository.CookItemRepository;
 import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groups.repository.GroupRepository;
@@ -52,6 +54,45 @@ public class CookServiceImpl implements CookService{
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
+    @Override
+    @Transactional
+    public ResponseEntity<ApiResponse<Void>> addNewCook2(CookRequestDto2 request) {
+        Group group = groupRepository.findById(request.getGroupId())
+                .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+    
+        Cook cook = Cook.builder()
+                .cookName(request.getCookName())
+                .cookMemo(request.getCookMemo())
+                .cookNutriKcal(request.getCookNutriKcal())
+                .cookNutriCarbohydrate(request.getCookNutriCarbohydrate())
+                .cookNutriProtein(request.getCookNutriProtein())
+                .cookNutriFat(request.getCookNutriFat())
+                .group(group)
+                .build();
+    
+        cookRepository.save(cook);
+    
+        if (request.getCookItems() != null && !request.getCookItems().isEmpty()) {
+            List<CookItem> cookItems = request.getCookItems().stream()
+                .map(itemDto -> CookItem.builder()
+                        .itemName(itemDto.getItemName())
+                        .count(itemDto.getCount())
+                        .nutriUnit(itemDto.getNutriUnit())
+                        .category(itemDto.getCategory())
+                        .brandName(itemDto.getBrandName())
+                        .storageArea(itemDto.getStorageArea())
+                        .nutriCapacity(itemDto.getNutriCapacity())
+                        .nutriKcal(itemDto.getNutriKcal())
+                        .cook(cook)
+                        .build())
+            .toList();
+    
+            cookItemRepository.saveAll(cookItems);
+        }
+    
+        return ResponseEntity.ok(ApiResponse.success(null));
+    }
+    
     @Override
     public ResponseEntity<ApiResponse<List<CookSummaryResponseDto>>> getCookList(Long groupId) {
         Group group = groupRepository.findById(groupId)

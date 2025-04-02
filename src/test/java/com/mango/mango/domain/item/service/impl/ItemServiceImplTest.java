@@ -116,7 +116,7 @@ class ItemServiceImplTest {
         // Given
         ItemRequestDto requestDto = new ItemRequestDto(
                 1L, "New Item", "Category", "Brand", "Fridge",
-                "g", 150, 300, 60, 40, 20, true // isOpenItem = true
+                "g",null, 150, 300, 60, 40, 20, true // isOpenItem = true
         );
 
         Group mockGroup = new Group(1L, "Test Group");
@@ -141,7 +141,7 @@ class ItemServiceImplTest {
         // Given
         ItemRequestDto requestDto = new ItemRequestDto(
                 2L, null, null, null, null, null,
-                0, 0, 0, 0, 0, false
+                null, 0, 0, 0, 0, 0, false
         );
 
         when(groupRepository.findById(2L)).thenReturn(Optional.empty());

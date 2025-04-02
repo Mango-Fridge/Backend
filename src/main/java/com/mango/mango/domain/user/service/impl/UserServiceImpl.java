@@ -1,5 +1,6 @@
 package com.mango.mango.domain.user.service.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,9 @@ import com.mango.mango.config.oauth.impl.KakaoOAuthProvider;
 import com.mango.mango.domain.agreementLog.constant.AgreementType;
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.agreementLog.repository.AgreementLogRepository;
+import com.mango.mango.domain.groupMembers.repository.GroupMemberRepository;
+import com.mango.mango.domain.groups.entity.Group;
+import com.mango.mango.domain.groups.repository.GroupRepository;
 import com.mango.mango.domain.user.dto.request.UserLoginDto;
 import com.mango.mango.domain.user.dto.request.UserSignUpRequestDto;
 import com.mango.mango.domain.user.dto.response.UserLoginResponseDto;
@@ -27,6 +31,8 @@ import com.mango.mango.global.error.CustomException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final AgreementLogRepository agreementLogRepository;
+    private final GroupMemberRepository groupMemberRepository;
+    private final GroupRepository groupRepository;
 
     private final KakaoOAuthProvider kakaoOAuthProvider;
     private final AppleOAuthProvider appleOAuthProvider;
@@ -162,7 +168,10 @@ public class UserServiceImpl implements UserService {
 
         // 향후 그룹에 대한 유저 삭제도 이뤄져야 함 -> 그룹장일 때, 그룹원일 때
 
+        List<Group> groupsOwned = groupRepository.findByGroupOwner(user);
+        groupRepository.deleteAll(groupsOwned);
         agreementLogRepository.deleteByUser(user);
+        groupMemberRepository.deleteByUser(user);
 
         userRepository.delete(user);
     }
