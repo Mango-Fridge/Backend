@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,8 +20,8 @@ import java.util.Set;
 
 import com.mango.mango.domain.agreementLog.entity.AgreementLog;
 import com.mango.mango.domain.base.entity.BaseEntity;
-import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.groupMembers.entity.GroupMember;
+import com.mango.mango.domain.groups.entity.Group;
 
 import jakarta.persistence.CascadeType;
 
@@ -51,8 +53,8 @@ public class User extends BaseEntity{
     private Set<Group> ownedGroups = new HashSet<>();
 
     // 사용자가 가입한 그룹 목록 (중간 엔티티를 통해 매핑)
-    @OneToMany(mappedBy = "user")
-    private Set<GroupMember> groupMembers = new HashSet<>();
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private GroupMember groupMember;
 
     @Builder
     public User(String username, String email, String oauthProvider) {

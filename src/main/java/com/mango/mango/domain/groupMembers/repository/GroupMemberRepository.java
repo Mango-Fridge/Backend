@@ -4,9 +4,11 @@ import com.mango.mango.domain.groupMembers.entity.GroupMember;
 import com.mango.mango.domain.groups.entity.Group;
 import com.mango.mango.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +22,9 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
     List<User> getUsersByGroupId(@Param("groupId") Long groupId);
 
     void deleteByGroupAndUser(Group group, User user);
+
+    @Modifying(clearAutomatically = true)
+    @Transactional
+    @Query("DELETE FROM GroupMember gm WHERE gm.user = :user")
+    void deleteByUser(@Param("user") User user);
 }
