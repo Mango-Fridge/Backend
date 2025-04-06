@@ -457,9 +457,8 @@ public class ItemServiceImpl implements ItemService {
 
             while (hasMoreData) {
                 String response = fetchDataFromApi(pageNo, crtrYmd);
-                if (response == null || response.contains("<resultCode>03</resultCode>")) {
-                    hasMoreData = false;
-                } else {
+                if (response.contains("<resultCode>03</resultCode>"))   hasMoreData = false;
+                else {
                     log.info("현재 {}개 Load", itemList.size());
                     itemList.addAll(parseItemsFromXml(response));
                     pageNo++;
