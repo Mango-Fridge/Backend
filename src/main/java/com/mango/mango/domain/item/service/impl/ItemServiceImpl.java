@@ -16,6 +16,10 @@ import com.mango.mango.global.response.ApiResponse;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -344,10 +348,11 @@ public class ItemServiceImpl implements ItemService {
 
     // [3-1] 물품 추가 - 물품 추가 검색어 물품들 호출
     @Override
-    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(String keyword) {
-        List<Item> items = itemRepository.findByItemNameContainingIgnoreCase(keyword);
+    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(String keyword, int page) {
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("itemName").ascending());
+        Page<Item> itemPage = itemRepository.findByItemNameContainingIgnoreCase(keyword, pageable);
 
-        List<SearchItemResponseDto.searchItems> searchItemList = items.stream()
+        List<SearchItemResponseDto.searchItems> searchItemList = itemPage.getContent().stream()
                 .map(item -> new SearchItemResponseDto.searchItems(
                         item.getItemId(),
                         item.getItemName(),
