@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/items")
@@ -22,8 +21,10 @@ public class ItemController {
 
     @Operation(summary = "[3-1] 물품 추가 - 물품 추가 검색어 물품들 호출")
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(@RequestParam String keyword) {
-        return itemService.searchItems(keyword);
+    public ResponseEntity<ApiResponse<SearchItemResponseDto>> searchItems(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page) {
+        return itemService.searchItems(keyword, page);
     }
 
     @Operation(summary = "[3-1] 물품 추가 - 물품 추가 상세 페이지 데이터 호출")
