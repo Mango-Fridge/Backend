@@ -16,6 +16,7 @@ import com.mango.mango.global.error.CustomException;
 import com.mango.mango.global.error.ErrorCode;
 import com.mango.mango.global.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 @Transactional(readOnly = true)
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
@@ -214,20 +216,27 @@ public class GroupServiceImpl implements GroupService {
         // 유저 존재 여부 확인
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        log.info("유저 조회 완료 - userId: {}", userId);
 
         // 그룹 존재 여부 확인
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+        log.info("그룹 조회 완료 - groupId: {}", groupId);
 
         // 그룹장인 경우
         if(group.getGroupOwner().getId() == userId){
+            log.info("요청한 유저는 그룹장입니다 - userId: {}", userId);
             // 그룹장만 있는 경우
-            if(group.getGroupMembers().size() == 1){
+            if(groupMemberRepository.countByGroup(group) == 1){
+                log.info("그룹장만 그룹에 존재함. 그룹 삭제 진행 - groupId: {}", groupId);
                 groupRepository.delete(group);
                 return ResponseEntity.ok(ApiResponse.success(null));
             }
             // 그룹장 외 멤버가 있는 경우
-            else                                            throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
+            else{
+                log.warn("그룹장 외 다른 멤버가 존재하여 그룹장이 나갈 수 없음 - groupId: {}", groupId);
+                throw new CustomException(ErrorCode.GROUP_OWNER_CANNOT_LEAVE);
+            }
         }
 
         // Redis에 저장된 그룹별 신청 유저들의 ID
@@ -235,16 +244,25 @@ public class GroupServiceImpl implements GroupService {
                 .stream()
                 .map(Long::parseLong)
                 .collect(Collectors.toSet());
+        log.info("Redis에서 그룹 신청 유저 목록 조회 완료 - 신청 유저 수: {}", groupHopeUserIds.size());
 
         // 신청 유저에 속해있는 경우
         if(groupHopeUserIds.contains(userId)){
+            log.info("유저가 신청 유저 목록에 존재 - userId: {}", userId);
             redisTemplate.opsForSet().remove(groupKey, userId.toString());
             redisTemplate.opsForSet().remove(userKey, groupId.toString());
+            log.info("Redis에서 신청 유저 정보 제거 완료 - userId: {}, groupId: {}", userId, groupId);
             return ResponseEntity.ok(ApiResponse.success(null));
         }
 
         // 그룹에 속해있는 경우
-        groupMemberRepository.deleteByGroupAndUser(group, user);
+        GroupMember groupMember = groupMemberRepository.findByGroupAndUser(group, user)
+                .orElseThrow(() -> {
+                    log.warn("유저가 그룹 멤버가 아님 - groupId: {}, userId: {}", groupId, userId);
+                    return new CustomException(ErrorCode.GROUP_MEMBER_NOT_FOUND);
+                });
+        groupMemberRepository.delete(groupMember);
+        log.info("유저가 그룹 멤버에서 정상적으로 탈퇴함 - groupId: {}, userId: {}", groupId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
