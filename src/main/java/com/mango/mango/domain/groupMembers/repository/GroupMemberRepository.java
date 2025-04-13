@@ -23,6 +23,8 @@ public interface GroupMemberRepository extends JpaRepository<GroupMember, Long> 
 
     long countByGroup(Group group);
 
+    Optional<GroupMember> findByGroupAndUser(Group group, User user);
+
     @Modifying(clearAutomatically = true)
     @Transactional
     @Query("DELETE FROM GroupMember gm WHERE gm.group = :group AND gm.user = :user")

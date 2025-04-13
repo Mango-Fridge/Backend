@@ -48,6 +48,8 @@ public enum ErrorCode {
     GROUP_OWNER_CANNOT_LEAVE("G005", "그룹장은 그룹을 나갈 수 없습니다."),
     GROUP_OWNER_ALREADY_EXISTS("G006", "해당 유저는 이미 그룹장입니다."),
     USER_NOT_ALREADY_IN_GROUP_HOPE("G007", "해당 유저는 그룹에 신청하지 않았습니다."),
+    USER_ALREADY_IN_GROUP_HOPE("G008", "해당 유저는 이미 그룹에 신청했습니다."),
+    USER_ALREADY_IN_GROUP("G009", "해당 유저는 이미 그룹에 속해있습니다."),
 
     // GroupMember
     GROUP_MEMBER_NOT_FOUND("GM001", "해당 그룹 멤버를 찾을 수 없습니다.");
