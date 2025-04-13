@@ -229,6 +229,7 @@ public class GroupServiceImpl implements GroupService {
             // 그룹장만 있는 경우
             if(groupMemberRepository.countByGroup(group) == 1){
                 log.info("그룹장만 그룹에 존재함. 그룹 삭제 진행 - groupId: {}", groupId);
+                groupMemberRepository.deleteByGroupAndUser(group, user);
                 groupRepository.delete(group);
                 return ResponseEntity.ok(ApiResponse.success(null));
             }
@@ -256,12 +257,7 @@ public class GroupServiceImpl implements GroupService {
         }
 
         // 그룹에 속해있는 경우
-        GroupMember groupMember = groupMemberRepository.findByGroupAndUser(group, user)
-                .orElseThrow(() -> {
-                    log.warn("유저가 그룹 멤버가 아님 - groupId: {}, userId: {}", groupId, userId);
-                    return new CustomException(ErrorCode.GROUP_MEMBER_NOT_FOUND);
-                });
-        groupMemberRepository.delete(groupMember);
+        groupMemberRepository.deleteByGroupAndUser(group, user);
         log.info("유저가 그룹 멤버에서 정상적으로 탈퇴함 - groupId: {}, userId: {}", groupId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
