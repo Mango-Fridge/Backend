@@ -66,6 +66,9 @@ public class GroupServiceImpl implements GroupService {
         User groupOwner = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // 이미 그룹이 존재하는지 확인
+        if(groupOwner.getGroupMember() != null)     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
+
         // 그룹 생성 및 저장
         Group newGroup = Group.builder()
                 .groupName(groupName)
@@ -127,6 +130,17 @@ public class GroupServiceImpl implements GroupService {
         // 그룹 존재 여부 확인
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 이미 그룹이 존재하는지 확인
+        if(groupUser.getGroupMember() != null)     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
+
+        // Redis에 저장된 그룹별 신청 유저들의 ID
+        Set<Long> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey)
+                .stream()
+                .map(Long::parseLong)
+                .collect(Collectors.toSet());
+
+        if(groupHopeUserIds.contains(userId))   throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP_HOPE);
 
         // groupId별 userId로 저장(만료일자 7일)
         redisTemplate.opsForSet().add(groupKey, userId.toString());
@@ -229,6 +243,7 @@ public class GroupServiceImpl implements GroupService {
             // 그룹장만 있는 경우
             if(groupMemberRepository.countByGroup(group) == 1){
                 log.info("그룹장만 그룹에 존재함. 그룹 삭제 진행 - groupId: {}", groupId);
+                groupMemberRepository.deleteByGroupAndUser(group, user);
                 groupRepository.delete(group);
                 return ResponseEntity.ok(ApiResponse.success(null));
             }
@@ -256,12 +271,9 @@ public class GroupServiceImpl implements GroupService {
         }
 
         // 그룹에 속해있는 경우
-        GroupMember groupMember = groupMemberRepository.findByGroupAndUser(group, user)
-                .orElseThrow(() -> {
-                    log.warn("유저가 그룹 멤버가 아님 - groupId: {}, userId: {}", groupId, userId);
-                    return new CustomException(ErrorCode.GROUP_MEMBER_NOT_FOUND);
-                });
-        groupMemberRepository.delete(groupMember);
+        groupMemberRepository.findByGroupAndUser(group, user)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_ALREADY_IN_GROUP));
+        groupMemberRepository.deleteByGroupAndUser(group, user);
         log.info("유저가 그룹 멤버에서 정상적으로 탈퇴함 - groupId: {}, userId: {}", groupId, userId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -341,6 +353,9 @@ public class GroupServiceImpl implements GroupService {
         // 그룹 존재 여부 확인
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new CustomException(ErrorCode.GROUP_NOT_FOUND));
+
+        // 이미 그룹에 속해있는 유저인 경우
+        if(user.getGroupMember() != null)     throw new CustomException(ErrorCode.USER_ALREADY_IN_GROUP);
 
         // Redis에 저장된 그룹별 신청 유저들의 ID 확인
         Set<String> groupHopeUserIds = redisTemplate.opsForSet().members(groupKey);
