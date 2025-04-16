@@ -105,6 +105,7 @@ public class GroupServiceImpl implements GroupService {
         if(!(Integer.parseInt(groupCodeSplit[1]) == group.getCreatedAt().getSecond()))     throw new CustomException(ErrorCode.GROUP_INVALID_TIMESTAMP);
 
         GroupExistResponseDto groupExistResponseDto = GroupExistResponseDto.builder()
+                .groupId(groupId)
                 .groupName(group.getGroupName())
                 .groupOwnerName(group.getGroupOwner().getUsername())
                 .groupMemberCount(group.getGroupMembers().size())
