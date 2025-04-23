@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class GroupContentResponseDto {
     private Long contentId;
     private String contentName;
+    private String brandName;
     private int count;
     private LocalDateTime expDate;
     private String storageArea;
