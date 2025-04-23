@@ -37,6 +37,7 @@ public class ContentServiceImpl implements ContentService {
         List<GroupContentResponseDto> GroupContentResponseDtos = contents.stream()
                 .map(content -> new GroupContentResponseDto(
                         content.getContentId(),
+                        content.getBrandName(),
                         content.getContentName(),
                         content.getCount(),
                         content.getExpDate(),
