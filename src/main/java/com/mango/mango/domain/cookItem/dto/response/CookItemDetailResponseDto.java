@@ -19,6 +19,7 @@ public class CookItemDetailResponseDto {
     private String nutriUnit;
     private int nutriCapacity;
     private int nutriKcal;
+    private String subCategory;
 
     public static CookItemDetailResponseDto fromEntity(CookItem item) {
         return CookItemDetailResponseDto.builder()
@@ -31,6 +32,7 @@ public class CookItemDetailResponseDto {
                 .nutriUnit(item.getNutriUnit())
                 .nutriCapacity(item.getNutriCapacity())
                 .nutriKcal(item.getNutriKcal())
+                .subCategory(item.getSubCategory())
                 .build();
     }
 }

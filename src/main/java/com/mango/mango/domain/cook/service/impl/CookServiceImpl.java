@@ -83,6 +83,7 @@ public class CookServiceImpl implements CookService{
                         .storageArea(itemDto.getStorageArea())
                         .nutriCapacity(itemDto.getNutriCapacity())
                         .nutriKcal(itemDto.getNutriKcal())
+                        .subCategory(itemDto.getSubCategory())
                         .cook(cook)
                         .build())
             .toList();
