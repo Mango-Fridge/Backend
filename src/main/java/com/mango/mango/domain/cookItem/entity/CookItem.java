@@ -12,7 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Builder;
 import lombok.*;
 
 @Entity
@@ -51,6 +50,9 @@ public class CookItem extends BaseEntity{
     @Column(name = "NUTRI_KCAL")
     private int nutriKcal;
 
+    @Column(name = "SUB_CATEGORY", length = 50)
+    private String subCategory;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "COOK_ID", nullable = false)
     private Cook cook;
@@ -64,6 +66,7 @@ public class CookItem extends BaseEntity{
                 String nutriUnit,
                 int nutriCapacity,
                 int nutriKcal,
+                String subCategory,
                 Cook cook) {
         this.itemName = itemName;
         this.count = count;
@@ -73,6 +76,7 @@ public class CookItem extends BaseEntity{
         this.nutriUnit = nutriUnit;
         this.nutriCapacity = nutriCapacity;
         this.nutriKcal = nutriKcal;
+        this.subCategory = subCategory;
         this.cook = cook;
     }
 
@@ -85,6 +89,7 @@ public class CookItem extends BaseEntity{
             String nutriUnit,
             int nutriCapacity,
             int nutriKcal,
+            String subCategory,
             Cook cook
     ) {
         this.itemId = itemId;
@@ -95,6 +100,7 @@ public class CookItem extends BaseEntity{
         this.nutriUnit = nutriUnit;
         this.nutriCapacity = nutriCapacity;
         this.nutriKcal = nutriKcal;
+        this.subCategory = subCategory;
         this.cook = cook;
     }
 }
