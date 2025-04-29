@@ -16,4 +16,5 @@ public class CookItemRequestDto {
     private String nutriUnit;
     private int nutriCapacity;
     private int nutriKcal;
+    private String subCategory;
 }
