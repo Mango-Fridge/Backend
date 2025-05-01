@@ -69,12 +69,14 @@ public class Content extends BaseEntity {
     private Group group;
 
     @Builder
-    public Content(Long contentId, String contentName, int count, LocalDateTime regDate, String storageArea) {
+    public Content(Long contentId, String contentName, int count, LocalDateTime regDate, String storageArea, String subCategory, int nutriKcal) {
         this.contentId = contentId;
         this.contentName = contentName;
         this.count = count;
         this.regDate = regDate;
         this.storageArea = storageArea;
+        this.subCategory = subCategory;
+        this.nutriKcal = nutriKcal;
     }
 
     @Builder
