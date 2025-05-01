@@ -19,4 +19,5 @@ public class GroupContentResponseDto {
     private LocalDateTime expDate;
     private String storageArea;
     private String subCategory;
+    private int nutriKcal;
 }
