@@ -41,7 +41,8 @@ public class ContentServiceImpl implements ContentService {
                         content.getBrandName(),
                         content.getCount(),
                         content.getExpDate(),
-                        content.getStorageArea()
+                        content.getStorageArea(),
+                        content.getSubCategory()
                 ))
                 .collect(Collectors.toList());
 
