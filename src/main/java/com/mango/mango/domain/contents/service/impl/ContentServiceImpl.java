@@ -42,7 +42,8 @@ public class ContentServiceImpl implements ContentService {
                         content.getCount(),
                         content.getExpDate(),
                         content.getStorageArea(),
-                        content.getSubCategory()
+                        content.getSubCategory(),
+                        content.getNutriKcal()
                 ))
                 .collect(Collectors.toList());
 
