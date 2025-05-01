@@ -18,4 +18,5 @@ public class GroupContentResponseDto {
     private int count;
     private LocalDateTime expDate;
     private String storageArea;
+    private String subCategory;
 }
